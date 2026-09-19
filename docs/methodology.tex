@@ -1,0 +1,740 @@
+\documentclass[11pt,a4paper]{article}
+
+% ---------- Paquetes ----------
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[english]{babel}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{mathtools}
+\usepackage{geometry}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{enumitem}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{listings}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\usepackage{caption}
+\usepackage{subcaption}
+\usepackage{fancyhdr}
+\usepackage{titlesec}
+
+\geometry{margin=1in}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!50!black,
+    citecolor=blue!50!black,
+    urlcolor=blue!50!black,
+    pdftitle={Entropy Arena: A Mathematical Framework for Comparing Randomness Sources},
+    pdfauthor={Entropy Arena Project}
+}
+
+% ---------- Entornos ----------
+\theoremstyle{plain}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{corollary}[theorem]{Corollary}
+
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{example}[theorem]{Example}
+\newtheorem{remark}[theorem]{Remark}
+
+% ---------- Encabezado ----------
+\pagestyle{fancy}
+\fancyhf{}
+\rhead{\small Entropy Arena}
+\lhead{\small\thesection\ \textit{\nouppercase{\leftmark}}}
+\cfoot{\thepage}
+
+% ---------- Título ----------
+\title{
+    \vspace{-2cm}
+    \rule{\linewidth}{0.4pt}\\[0.4cm]
+    \textbf{\Large Entropy Arena}\\[0.3cm]
+    \large A Mathematical Framework for the Comparative\\ 
+    Analysis of Randomness Sources in Cryptographic Key Generation\\[0.4cm]
+    \rule{\linewidth}{0.4pt}
+}
+\author{\normalsize Entropy Arena Project}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+\noindent
+This document formalizes the mathematical foundations of \emph{Entropy Arena}, a
+framework for the empirical and theoretical comparison of randomness sources used
+in the generation of seeds and private keys for a multi-signature wallet. We
+present rigorous definitions of the entropy measures employed (Shannon,
+min-entropy, collision, and compression-based), the dynamical systems underlying
+the mathematical generators (Brownian motion, logistic map, Lorenz attractor,
+and cellular automata), the statistical battery used to evaluate the outputs
+(frequency, runs, chi-squared, autocorrelation, and a subset of NIST SP~800-22),
+the composite scoring functional, and the cryptographic pipeline that maps raw
+entropy to BIP32 keys and finally to a $2$-of-$3$ multisignature script.
+\end{abstract}
+
+\tableofcontents
+\newpage
+
+% ============================================================
+\section{Introduction}
+% ============================================================
+
+The security of any cryptographic system ultimately rests on the quality of the
+randomness used to generate its keys. In the context of a multi-signature wallet,
+this requirement is amplified: multiple independent entropy sources must be
+combined, each ideally derived from a distinct physical or computational origin.
+\emph{Entropy Arena} provides a common formal ground on which heterogeneous
+generators --- computational, mathematical, and physically manual --- can be
+compared under identical statistical scrutiny.
+
+Let $\mathcal{M} = \{M_1, M_2, \dots, M_k\}$ be a finite set of entropy methods.
+Each method $M_i$ is modeled as a stochastic map
+\begin{equation}
+    M_i : \mathbb{N} \to \{0,1\}^{8n}, \qquad M_i(n) = D_i,
+\end{equation}
+that produces a byte string $D_i$ of length $n$. The arena's objective is to
+assign to each $M_i$ a score $S(M_i) \in [0,100]$ that reflects both the
+statistical quality of the output and the \emph{honesty} of the entropy claimed.
+
+% ============================================================
+\section{Preliminaries: Measures of Entropy}
+% ============================================================
+
+\subsection{Shannon entropy}
+
+\begin{definition}[Shannon entropy]
+Let $X$ be a discrete random variable with alphabet $\mathcal{X}$ and probability
+mass function $p(x) = \Pr[X = x]$. The Shannon entropy of $X$, in bits, is
+\begin{equation}
+    H_1(X) \;=\; -\sum_{x \in \mathcal{X}} p(x) \log_2 p(x).
+    \label{eq:shannon}
+\end{equation}
+For a byte-valued variable, $\mathcal{X} = \{0, \dots, 255\}$ and
+$H_1(X) \le 8$.
+\end{definition}
+
+Given an empirical byte string $D = (d_1, \dots, d_n)$, we estimate the
+distribution through frequency counts $c_v = |\{i : d_i = v\}|$ for each
+$v \in \{0,\dots,255\}$, giving $\hat{p}(v) = c_v / n$ and
+\begin{equation}
+    \hat{H}_1(D) \;=\; -\sum_{v=0}^{255} \hat{p}(v) \log_2 \hat{p}(v).
+\end{equation}
+
+\subsection{Min-entropy}
+
+\begin{definition}[Min-entropy]
+The min-entropy of $X$ is
+\begin{equation}
+    H_\infty(X) \;=\; -\log_2 \max_{x \in \mathcal{X}} p(x).
+    \label{eq:minentropy}
+\end{equation}
+It lower-bounds the output of any extractor: even the most likely outcome
+carries at most $H_\infty(X)$ bits of unpredictability.
+\end{definition}
+
+Empirically, $\hat{H}_\infty(D) = -\log_2 \max_v \hat{p}(v)$.
+
+\begin{remark}
+Min-entropy is the \emph{honest} measure for cryptographic purposes. A
+cryptographic hash applied to any input produces an output whose Shannon entropy
+approaches $8$ bits/byte, yet whose min-entropy is bounded by the entropy of the
+input. Thus, $H_1$ alone is insufficient to judge a generator.
+\end{remark}
+
+\subsection{Collision entropy}
+
+\begin{definition}[Collision entropy]
+Also known as Rényi entropy of order $2$:
+\begin{equation}
+    H_2(X) \;=\; -\log_2 \sum_{x \in \mathcal{X}} p(x)^2.
+    \label{eq:collision}
+\end{equation}
+It relates to the collision probability $P_c(X) = \sum_x p(x)^2$ via
+$H_2(X) = -\log_2 P_c(X)$.
+\end{definition}
+
+For a uniform distribution over 256 values, $H_1 = H_2 = H_\infty = 8$ bits.
+
+\subsection{Compression-based redundancy}
+
+\begin{definition}[Compression ratio]
+Let $\mathcal{C}$ denote a lossless compressor (here, DEFLATE). The compression
+ratio of $D$ is
+\begin{equation}
+    \rho(D) \;=\; \frac{|\mathcal{C}(D)|}{|D|}.
+    \label{eq:compress}
+\end{equation}
+Incompressible strings satisfy $\rho \approx 1$; highly redundant strings yield
+$\rho \ll 1$.
+\end{definition}
+
+% ============================================================
+\section{Entropy Sources}
+% ============================================================
+
+Each method $M_i$ belongs to one of four categories:
+\begin{itemize}[leftmargin=1.4em]
+    \item \textbf{Computational:} relies on the OS CSPRNG or on a non-secure PRNG.
+    \item \textbf{Mathematical:} uses a deterministic dynamical system, seeded
+          from the OS.
+    \item \textbf{Physical--manual:} entropy gathered by the user without any
+          digital intervention.
+    \item \textbf{Hybrid:} manual entropy passed through a whitening or
+          bias-correcting extractor.
+\end{itemize}
+
+\subsection{Computational methods}
+
+\paragraph{CSPRNG (\texttt{secrets}, \texttt{os.urandom}).} Let
+$G : \{0,1\}^\lambda \to \{0,1\}^{n}$ be a cryptographic pseudorandom generator.
+Assuming the seed is uniform over $\{0,1\}^\lambda$ and $G$ is a secure PRG,
+the output is computationally indistinguishable from uniform:
+\begin{equation}
+    \big|\Pr[\mathcal{A}(G(U_\lambda)) = 1] - \Pr[\mathcal{A}(U_n) = 1]\big|
+    \;\le\; \varepsilon(\lambda)
+\end{equation}
+for every probabilistic polynomial-time adversary $\mathcal{A}$. The min-entropy
+of the output, conditioned on the seed being secret, is $H_\infty = n$ bits.
+
+\paragraph{Mersenne Twister.} The MT19937 generator maintains a state
+$\mathbf{x} = (x_0, \dots, x_{623}) \in (\mathbb{Z}/2^{32}\mathbb{Z})^{624}$
+and evolves via
+\begin{equation}
+    x_{k+n} \;=\; x_{k+m} \;\oplus\; \big((x_k^{u} \mid x_{k+1}^{l})\,A\big),
+    \label{eq:mt}
+\end{equation}
+with $n=624$, $m=397$, and a constant twist matrix $A$. Its period is
+$2^{19937}-1$, but its state is fully recoverable from $624$ consecutive
+32-bit outputs. Consequently, if the seed is known,
+\begin{equation}
+    H_\infty(M_{\text{MT}}(n) \mid \text{seed}) \;=\; 0.
+\end{equation}
+
+\paragraph{UUIDv4.} A version-4 UUID embeds $122$ random bits out of $128$;
+the remaining $6$ bits encode the version and variant. Hence
+\begin{equation}
+    H_\infty(\text{UUIDv4}) \;=\; 122 \text{ bits}, \qquad
+    \frac{122}{16} \;=\; 7.625 \text{ bits/byte}.
+\end{equation}
+
+\subsection{Mathematical methods: deterministic dynamical systems}
+
+All methods in this category are deterministic given an initial condition, and
+their unpredictability derives entirely from the entropy injected into the seed.
+We formalize this via the following invariant.
+
+\begin{proposition}[Entropy conservation]
+Let $f : \mathcal{S} \to \mathcal{S}$ be a deterministic map and let
+$s_0 \sim \mu$ be a random initial condition. The output trajectory
+$(s_0, f(s_0), f^2(s_0), \dots)$ has entropy bounded above by $H(s_0)$.
+Formally, for any function $\phi$ of the trajectory,
+\begin{equation}
+    H(\phi(s_0, s_1, \dots)) \;\le\; H(s_0).
+\end{equation}
+\end{proposition}
+
+\begin{proof}
+The map $s_0 \mapsto (s_0, s_1, \dots)$ is injective on $\mathcal{S}$; applying
+the data-processing inequality yields the result.
+\end{proof}
+
+\subsubsection{Brownian motion}
+
+The standard Wiener process $\{W_t\}_{t \ge 0}$ satisfies $W_0 = 0$ and, for
+$0 \le s < t$, $W_t - W_s \sim \mathcal{N}(0, t-s)$ with independent increments.
+We discretize with step $\Delta t$ and increments
+\begin{equation}
+    \xi_k \;=\; \sqrt{\Delta t}\;\mathcal{N}(0,1), \qquad
+    W_k \;=\; \sum_{j=1}^{k} \xi_j.
+    \label{eq:bm}
+\end{equation}
+The bit stream is extracted from the sign of the increments:
+\begin{equation}
+    b_k \;=\; \mathbf{1}\!\left[\xi_k > 0\right].
+    \label{eq:bm_bits}
+\end{equation}
+Since $\Pr[\xi_k > 0] = 1/2$, each bit carries at most $1$ bit of Shannon
+entropy but, being a deterministic function of the seed, contributes
+$H_\infty = 0$ \emph{new} entropy.
+
+\subsubsection{Logistic map}
+
+The logistic map on the unit interval is
+\begin{equation}
+    x_{k+1} \;=\; r\, x_k\,(1 - x_k), \qquad x_k \in (0,1), \quad r \in (0,4].
+    \label{eq:logistic}
+\end{equation}
+For $r \in [r_\infty, 4]$ with $r_\infty \approx 3.56995$, the dynamics are
+chaotic. The Lyapunov exponent is
+\begin{equation}
+    \lambda \;=\; \lim_{N \to \infty} \frac{1}{N} \sum_{k=0}^{N-1}
+    \ln\big| r (1 - 2x_k) \big|.
+    \label{eq:lyap}
+\end{equation}
+For $r = 4$, $\lambda = \ln 2$, indicating exponential divergence of nearby
+trajectories. A burn-in of $K$ iterations ($K \approx 10^3$) discards the
+transient. Bits are extracted by
+\begin{equation}
+    b_k \;=\; \mathbf{1}\!\left[x_k > \tfrac{1}{2}\right].
+    \label{eq:logistic_bits}
+\end{equation}
+
+\subsubsection{Lorenz attractor}
+
+The Lorenz system is the three-dimensional ODE
+\begin{equation}
+    \dot{x} = \sigma(y - x), \qquad
+    \dot{y} = x(\rho - z) - y, \qquad
+    \dot{z} = xy - \beta z,
+    \label{eq:lorenz}
+\end{equation}
+with canonical parameters $\sigma = 10$, $\rho = 28$, $\beta = 8/3$. Numerical
+integration uses explicit Euler with step $\Delta t = 10^{-2}$. Bits are
+extracted from sign changes of the $x$-coordinate:
+\begin{equation}
+    b_k \;=\; \mathbf{1}\!\left[x_{k+1} > x_k\right].
+    \label{eq:lorenz_bits}
+\end{equation}
+The system's largest Lyapunov exponent is $\lambda_1 \approx 0.906$
+(natural log), confirming sensitive dependence on initial conditions.
+
+\subsubsection{Rule 30 cellular automaton}
+
+Let $c_i^{(t)} \in \{0,1\}$ denote the state of cell $i$ at time $t$ on a ring
+of width $L$. The elementary cellular automaton with Wolfram rule $30$ updates
+via
+\begin{equation}
+    c_i^{(t+1)} \;=\; c_{i-1}^{(t)} \;\oplus\;
+    \big(c_i^{(t)} \;\lor\; c_{i+1}^{(t)}\big),
+    \label{eq:rule30}
+\end{equation}
+where indices are taken modulo $L$. After $K$ warm-up steps, the first byte of
+each row is extracted:
+\begin{equation}
+    b^{(t)} \;=\; \sum_{i=0}^{7} c_i^{(t)}\, 2^{7-i}.
+\end{equation}
+Rule 30 is known to be computationally universal and passes the majority of
+Diehard tests, yet remains fully deterministic given the initial configuration.
+
+\subsection{Physical--manual methods}
+
+\subsubsection{Dice rolls}
+
+A fair six-sided die produces outcomes uniformly distributed over
+$\{1,\dots,6\}$, contributing
+\begin{equation}
+    h_{\text{die}} \;=\; \log_2 6 \;\approx\; 2.5850 \text{ bits per roll}.
+    \label{eq:die_bits}
+\end{equation}
+For $n$ rolls with outcomes $(r_1, \dots, r_n)$, we form the integer
+\begin{equation}
+    N \;=\; \sum_{i=1}^{n} (r_i - 1)\, 6^{\,n-i},
+    \label{eq:die_int}
+\end{equation}
+so that $N \in \{0, 1, \dots, 6^n - 1\}$. The total entropy is
+\begin{equation}
+    H_\infty(\text{dice}_n) \;=\; n \log_2 6 \;\approx\; 2.585\, n \text{ bits}.
+    \label{eq:die_total}
+\end{equation}
+A cryptographic extractor $E : \mathbb{Z} \to \{0,1\}^{8m}$ (here SHA-256
+applied iteratively) maps $N$ to $m$ bytes:
+\begin{equation}
+    D \;=\; E(N) \;=\; \mathrm{SHA256}(N) \,\|\, \mathrm{SHA256}(E_1) \,\|\, \cdots
+\end{equation}
+where $E_1 = \mathrm{SHA256}(N)$ and subsequent blocks are chained. The
+extractor preserves min-entropy: $H_\infty(D) = \min(8m, n \log_2 6)$.
+
+\subsubsection{Coin flips}
+
+A fair coin yields $h_{\text{flip}} = 1$ bit per toss. For $n$ flips with
+outcomes $f_i \in \{H, T\}$ we set
+\begin{equation}
+    b_i \;=\; \mathbf{1}[f_i = H],
+\end{equation}
+and pack the bits into bytes via
+\begin{equation}
+    d_j \;=\; \sum_{i=0}^{7} b_{8j + i}\, 2^{7-i}.
+\end{equation}
+The total min-entropy is $n$ bits.
+
+\subsubsection{Bias correction: von Neumann extractor}
+
+If the coin is biased with $\Pr[H] = p \ne 1/2$, the raw bits carry less than
+$1$ bit each. The von Neumann extractor operates on non-overlapping pairs:
+\begin{equation}
+    (H,T) \mapsto 1, \qquad (T,H) \mapsto 0, \qquad (H,H), (T,T) \mapsto \varnothing.
+    \label{eq:vonneumann}
+\end{equation}
+Each surviving bit is exactly fair. The acceptance probability per pair is
+\begin{equation}
+    q \;=\; 2 p (1 - p),
+    \label{eq:vn_eff}
+\end{equation}
+so on average $n q / 2$ output bits are obtained from $n$ flips. The expected
+number of flips required per output bit is
+\begin{equation}
+    \mathbb{E}[\text{flips/bit}] \;=\; \frac{1}{p(1-p)} \;\ge\; 4.
+\end{equation}
+For $p = 1/2$, this equals $4$; efficiency drops sharply as $|p - 1/2|$ grows.
+
+\subsubsection{Deck shuffle}
+
+A uniformly random permutation of $52$ cards has entropy
+\begin{equation}
+    H_\infty(\text{deck}) \;=\; \log_2(52!) \;\approx\; 225.581 \text{ bits},
+    \label{eq:deck_bits}
+\end{equation}
+or approximately $4.338$ bits per card. Given a permutation
+$\pi = (\pi_1, \dots, \pi_{52})$, we encode it via the Lehmer code:
+\begin{equation}
+    N \;=\; \sum_{i=1}^{52} c_i\, (52-i)!,
+    \label{eq:lehmer}
+\end{equation}
+where
+\begin{equation}
+    c_i \;=\; \big|\{ j > i : \pi_j < \pi_i \}\big|
+\end{equation}
+counts the inversions of $\pi_i$ with respect to the tail. The Lehmer code is
+a bijection between permutations and $\{0, 1, \dots, 52! - 1\}$; the resulting
+integer is then passed through the extractor.
+
+% ============================================================
+\section{Statistical Test Battery}
+% ============================================================
+
+Given a byte string $D$ of length $n$, define its bit expansion
+$\mathbf{b} = (b_1, \dots, b_{8n}) \in \{0,1\}^{8n}$ via
+$b_{8(j-1)+k} = \lfloor d_j / 2^{8-k} \rfloor \bmod 2$.
+
+\subsection{Frequency (monobit) test}
+
+Let $S = \sum_{i=1}^{m} (2 b_i - 1)$ with $m = 8n$. Under the null hypothesis
+$b_i \sim \mathrm{Bernoulli}(1/2)$ independently, $S / \sqrt{m}$ converges to a
+standard normal. The test statistic is
+\begin{equation}
+    s_{\text{obs}} \;=\; \frac{|S|}{\sqrt{m}},
+    \qquad
+    p_{\text{mono}} \;=\; \mathrm{erfc}\!\left( \frac{s_{\text{obs}}}{\sqrt{2}} \right),
+    \label{eq:monobit}
+\end{equation}
+where $\mathrm{erfc}(x) = \frac{2}{\sqrt{\pi}} \int_x^\infty e^{-t^2}\, dt$.
+The test passes at significance level $\alpha = 0.01$ when $p_{\text{mono}} \ge \alpha$.
+
+\subsection{Runs test}
+
+Let $V_{\text{obs}} = 1 + \sum_{i=1}^{m-1} \mathbf{1}[b_i \ne b_{i+1}]$ be the
+observed number of runs. Under $H_0$, with $\pi = m^{-1} \sum_i b_i$, the
+statistic
+\begin{equation}
+    Z \;=\; \frac{V_{\text{obs}} - 2 m \pi (1 - \pi)}{2 \sqrt{2m}\,\pi(1-\pi)}
+    \label{eq:runs}
+\end{equation}
+is asymptotically standard normal, so
+\begin{equation}
+    p_{\text{runs}} \;=\; \mathrm{erfc}\!\left( \frac{|V_{\text{obs}}
+    - 2 m \pi (1 - \pi)|}{2 \sqrt{2m}\, \pi (1-\pi)} \right).
+\end{equation}
+A preliminary consistency check $|\pi - 1/2| < 2 / \sqrt{m}$ is required.
+
+\subsection{Chi-squared test on byte frequencies}
+
+Let $c_v$ be the observed count of byte value $v \in \{0, \dots, 255\}$, and
+$E_v = n/256$ its expected count. The Pearson statistic is
+\begin{equation}
+    \chi^2 \;=\; \sum_{v=0}^{255} \frac{(c_v - E_v)^2}{E_v},
+    \qquad
+    p_{\chi^2} \;=\; 1 - F_{\chi^2_{255}}(\chi^2),
+    \label{eq:chi2}
+\end{equation}
+where $F_{\chi^2_{255}}$ is the CDF of a chi-squared distribution with $255$
+degrees of freedom.
+
+\subsection{Autocorrelation}
+
+For lag $\ell$, define
+\begin{equation}
+    \hat{\rho}(\ell) \;=\;
+    \frac{\sum_{i=1}^{n-\ell} (d_i - \bar{d})(d_{i+\ell} - \bar{d})}
+         {\sum_{i=1}^{n} (d_i - \bar{d})^2},
+    \label{eq:autocorr}
+\end{equation}
+with $\bar{d} = n^{-1} \sum_i d_i$. For an i.i.d.\ uniform source,
+$\hat{\rho}(\ell) \to 0$ in probability as $n \to \infty$.
+
+\subsection{NIST SP 800-22 subset}
+
+The following tests are implemented.
+
+\paragraph{Block frequency.}
+Partition $\mathbf{b}$ into $M = \lfloor m / L \rfloor$ blocks of length $L$
+(here $L = 128$). Let $\pi_i$ be the proportion of ones in block $i$. Under
+$H_0$,
+\begin{equation}
+    \chi^2 \;=\; 4 L \sum_{i=1}^{M} \left(\pi_i - \tfrac{1}{2}\right)^2
+    \;\sim\; \chi^2_M,
+    \qquad
+    p \;=\; 1 - F_{\chi^2_M}(\chi^2).
+    \label{eq:blockfreq}
+\end{equation}
+
+\paragraph{Cumulative sums.}
+Let $X_i = 2 b_i - 1 \in \{-1, +1\}$ and define the partial sums
+$S_k = \sum_{i=1}^{k} X_i$. Let
+\begin{equation}
+    z \;=\; \max_{1 \le k \le m} |S_k|.
+\end{equation}
+The $p$-value is computed via the standard normal CDF $\Phi$:
+\begin{equation}
+    p \;=\; 1 - \sum_{k} \left[ \Phi\!\left(\frac{(4k+1)z}{\sqrt{m}}\right)
+    - \Phi\!\left(\frac{(4k-1)z}{\sqrt{m}}\right) \right]
+    + \sum_{k} \left[ \Phi\!\left(\frac{(4k+3)z}{\sqrt{m}}\right)
+    - \Phi\!\left(\frac{(4k+1)z}{\sqrt{m}}\right) \right],
+    \label{eq:cumsu}
+\end{equation}
+summing over $k$ in the appropriate finite ranges derived in NIST~SP~800-22
+\S2.13. The backward mode applies the same formula to the reversed sequence.
+
+\paragraph{Longest run of ones.}
+Partition $\mathbf{b}$ into $N = \lfloor m / M \rfloor$ blocks of length $M$
+(here $M = 8$). Let $v_j$ count blocks whose longest run of ones belongs to
+category $j \in \{0,1,2,3\}$ (max run $\le 1$, $=2$, $=3$, $\ge 4$). Under
+$H_0$, the expected proportions are
+$(\pi_0, \pi_1, \pi_2, \pi_3) = (0.2148, 0.3672, 0.2305, 0.1875)$
+(interpolated for $M = 8$; exact values given in NIST SP 800-22, \S2.4).
+The test statistic is
+\begin{equation}
+    \chi^2 \;=\; \sum_{j=0}^{3} \frac{(v_j - N \pi_j)^2}{N \pi_j}
+    \;\sim\; \chi^2_3.
+\end{equation}
+
+% ============================================================
+\section{Composite Scoring Functional}
+% ============================================================
+
+Let $M_i$ be a method and let $\mathbf{f}(M_i) = (f_1, \dots, f_7)$ be its
+aggregated metrics:
+\begin{equation}
+\begin{aligned}
+    f_1 &= \frac{\hat{H}_\infty(D)}{8}, &\quad
+    f_2 &= \frac{\hat{H}_2(D)}{8}, \\
+    f_3 &= \mathbf{1}[p_{\text{mono}} \ge \alpha], &\quad
+    f_4 &= \mathbf{1}[p_{\text{runs}} \ge \alpha], \\
+    f_5 &= \mathbf{1}[p_{\chi^2} \ge \alpha], &\quad
+    f_6 &= 1 - \min(1, |\hat{\rho}(1)|), \\
+    f_7 &= \rho(D).
+\end{aligned}
+\label{eq:features}
+\end{equation}
+Each $f_j \in [0,1]$. The weighted score is
+\begin{equation}
+    S_0(M_i) \;=\; 100 \cdot \sum_{j=1}^{7} w_j\, f_j(M_i),
+    \qquad
+    \sum_j w_j = 1,
+    \label{eq:score0}
+\end{equation}
+with weights
+\begin{equation}
+    (w_1, \dots, w_7) = (0.30,\, 0.10,\, 0.15,\, 0.15,\, 0.10,\, 0.10,\, 0.10),
+\end{equation}
+corresponding to (min-entropy, collision, monobit, runs, chi-squared,
+autocorrelation, compression).
+
+\subsection{Penalization for determinism}
+
+\begin{definition}[Determinism penalty]
+Let $\delta(M_i) \in \{0,1\}$ indicate that $M_i$ is deterministic and let
+$\beta(M_i) \in \{0,1\}$ indicate that its theoretical entropy per unit is zero.
+The final score is
+\begin{equation}
+    S(M_i) \;=\; S_0(M_i) \cdot
+    \begin{cases}
+        0.5 & \text{if } \delta(M_i) = 1, \\
+        1.0 & \text{otherwise},
+    \end{cases}
+    \;\cdot\;
+    \begin{cases}
+        0.75 & \text{if } \beta(M_i) = 1, \\
+        1.0  & \text{otherwise}.
+    \end{cases}
+    \label{eq:score}
+\end{equation}
+\end{definition}
+
+\begin{remark}
+The penalties encode a cryptographic axiom: a method that merely \emph{looks}
+random is not equivalent to a method that \emph{is} unpredictable. A
+deterministic chaotic map with a known seed has $H_\infty = 0$ regardless of how
+well its output passes the statistical battery.
+\end{remark}
+
+% ============================================================
+\section{Cryptographic Pipeline}
+% ============================================================
+
+\subsection{Seed derivation}
+
+Given raw entropy $E \in \{0,1\}^{8n}$ and an optional passphrase $P$, the seed
+is derived via PBKDF2 with HMAC-SHA512:
+\begin{equation}
+    S \;=\; \mathrm{PBKDF2\text{-}HMAC\text{-}SHA512}
+    \big(E,\; \texttt{"mnemonic"} \| P,\; c = 2048,\; \mathrm{dkLen} = 64\big).
+    \label{eq:pbkdf2}
+\end{equation}
+$S$ is a 512-bit seed suitable for BIP32 key derivation.
+
+\subsection{BIP32 master key}
+
+Let $\mathrm{HMAC}(K, \cdot)$ denote HMAC-SHA512 with key $K$. The master key
+pair is
+\begin{equation}
+    I \;=\; \mathrm{HMAC}\big(\texttt{"Bitcoin seed"},\; S\big),
+    \qquad
+    k_m \;=\; I_{[0{:}32]}, \qquad
+    c_m \;=\; I_{[32{:}64]},
+    \label{eq:bip32master}
+\end{equation}
+where $k_m$ is the master private key and $c_m$ the master chain code.
+
+\subsection{Hardened child derivation}
+
+For a hardened child with index $i \in [0, 2^{31})$:
+\begin{equation}
+    I \;=\; \mathrm{HMAC}\big(c_m,\; \texttt{0x00} \| k_m \| i_{\text{BE32}}\big),
+    \qquad
+    k_i \;=\; I_{[0{:}32]}, \qquad
+    c_i \;=\; I_{[32{:}64]}.
+    \label{eq:bip32child}
+\end{equation}
+The hardened mode prevents deriving child public keys without the parent
+private key, which is required for cold-storage signers.
+
+\subsection{Multi-signature script}
+
+Given three signer public keys $\mathrm{PK}_1, \mathrm{PK}_2, \mathrm{PK}_3$
+(determined by their respective $k_i$ on secp256k1), a $2$-of-$3$ P2SH
+multisignature script is
+\begin{equation}
+    \texttt{Script} \;=\; \mathrm{OP}_2 \;
+    \langle \mathrm{PK}_1 \rangle \langle \mathrm{PK}_2 \rangle
+    \langle \mathrm{PK}_3 \rangle \; \mathrm{OP}_3 \; \mathrm{OP\_CHECKMULTISIG}.
+    \label{eq:multisig}
+\end{equation}
+A transaction spending an output locked by this script requires $m = 2$
+distinct valid signatures. Formally, if $\sigma_i$ is a valid ECDSA signature
+under $\mathrm{PK}_i$ for message $T$, the script accepts if and only if
+\begin{equation}
+    \exists\, \mathcal{S} \subseteq \{1,2,3\},\; |\mathcal{S}| \ge 2,\;
+    \forall i \in \mathcal{S}:\; \mathrm{Verify}(\mathrm{PK}_i, T, \sigma_i) = 1.
+\end{equation}
+
+\subsection{Security of independent sources}
+
+Suppose the multisignature uses $k$ independent entropy sources with
+min-entropies $H_\infty^{(1)}, \dots, H_\infty^{(k)}$. If each source is
+adversarially controlled except one with min-entropy $H_\infty^* \ge 128$ bits,
+the resulting wallet remains $128$-bit secure. Formally, define the guessing
+probability of the adversary as
+\begin{equation}
+    P_{\text{guess}} \;=\; \max_{\mathcal{A}} \Pr[\mathcal{A} \text{ recovers key}].
+\end{equation}
+Then
+\begin{equation}
+    P_{\text{guess}} \;\le\; 2^{-H_\infty^*} \cdot
+    \prod_{j \ne *} 1 \;=\; 2^{-H_\infty^*}.
+    \label{eq:multisig_security}
+\end{equation}
+This is the formal justification for the multisig design: even if $k-1$ sources
+are compromised, the wallet's security reduces to that of the single honest
+source.
+
+% ============================================================
+\section{Discussion}
+% ============================================================
+
+The framework presented here has a deliberate pedagogical asymmetry. On one
+hand, every method --- whether a CSPRNG, a chaotic map, or a physical die --- is
+subjected to the same statistical battery, and many will pass all tests. On the
+other hand, the scoring functional strictly separates methods that
+\emph{contribute} entropy from those that merely \emph{propagate} it. This
+separation is captured by the determinism penalty of
+Equation~\eqref{eq:score} and by the use of min-entropy as the dominant term in
+Equation~\eqref{eq:score0}.
+
+Three formal consequences follow:
+\begin{enumerate}[leftmargin=1.4em]
+    \item \textbf{Statistical uniformity is necessary but not sufficient.}
+          Any deterministic system with a secret seed can be made statistically
+          indistinguishable from a true RNG; this is the entire purpose of a
+          hash function used as an extractor.
+    \item \textbf{Physical entropy scales linearly with effort.} Generating
+          $128$ bits from dice requires at least $\lceil 128 / \log_2 6 \rceil
+          = 50$ rolls; from coin flips, $128$ tosses; from a deck shuffle, at
+          most one shuffle suffices.
+    \item \textbf{Multisig security is governed by the minimum, not the sum.}
+          Equation~\eqref{eq:multisig_security} formalizes the well-known
+          principle that in threshold cryptography, the adversary only needs to
+          break one honest participant.
+\end{enumerate}
+
+The arena thus serves two purposes: as an empirical benchmark for individual
+generators, and as a formal demonstration that the cryptographic quality of a
+key depends on a property --- unpredictability under adversarial observation
+--- that no statistical test alone can measure.
+
+% ============================================================
+\appendix
+\section{Notation}
+% ============================================================
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}ll@{}}
+\toprule
+Symbol & Meaning \\
+\midrule
+$X, Y$ & Discrete random variables \\
+$p(x)$ & Probability mass function of $X$ \\
+$H_1, H_2, H_\infty$ & Shannon, collision, and min-entropy \\
+$\hat{H}$ & Empirical estimate of $H$ \\
+$D$ & Byte string output by a generator \\
+$n, m$ & Number of bytes, number of bits ($m = 8n$) \\
+$r$ & Logistic map control parameter \\
+$\sigma, \rho, \beta$ & Lorenz parameters \\
+$\lambda$ & Lyapunov exponent \\
+$\alpha$ & Significance level of statistical tests \\
+$w_j$ & Weight of the $j$-th metric in the score \\
+$S(M_i)$ & Final score of method $M_i$ \\
+$k_m, c_m$ & BIP32 master private key and chain code \\
+$\mathrm{PK}_i$ & Public key of signer $i$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\section{Constants}
+% ============================================================
+
+\begin{table}[h]
+\centering
+\begin{tabular}{@{}lr@{}}
+\toprule
+Quantity & Value \\
+\midrule
+$\log_2 6$ & $2.58496\ldots$ \\
+$\log_2(52!)$ & $225.58100\ldots$ \\
+$52!$ & $\approx 8.0658 \times 10^{67}$ \\
+MT19937 period & $2^{19937} - 1$ \\
+secp256k1 group order & $\approx 1.1579 \times 10^{77}$ \\
+Lorenz largest Lyapunov exponent & $\approx 0.9056$ \\
+Logistic map Lyapunov at $r=4$ & $\ln 2$ \\
+PBKDF2 iterations (BIP39) & $2048$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\end{document}
