@@ -1,5 +1,7 @@
 # Guía completa: Entropy Arena + wallet multisig 2-de-3 (Assignment 2)
 
+> **Diagramas del flujo (quién hace qué y en qué PC): [DIAGRAMA_FLUJO.md](DIAGRAMA_FLUJO.md)**
+
 Todo lo que se construyó y, sobre todo, **cómo reproducir la prueba de principio a fin**:
 comandos en orden, listos para copiar en PowerShell (Windows). Red usada: **regtest**
 (red local privada; las monedas no tienen valor).
@@ -145,6 +147,21 @@ Qué imprime:
 - Crea `data\public\signer_<nombre>.json` con solo datos públicos.
 
 Cada firmante envía **únicamente ese JSON** al coordinador (por chat/USB está bien).
+
+> **Dónde queda el archivo:** la carpeta `data\public\` **se crea sola** la primera vez que
+> ejecutas `signer_export.py`, dentro de la carpeta del proyecto **de ese equipo**
+> (p. ej. `C:\Users\<tú>\Downloads\entropy-arena\data\public\signer_ana.json`). La ruta exacta
+> se imprime al final, en la línea `Archivo PÚBLICO (compártelo con el coordinador): …`.
+> Para comprobarlo: `Get-ChildItem data\public`.
+>
+> **No está en GitHub:** `data\public\` está en el `.gitignore`, así que un clon nuevo del
+> repositorio no la trae. Los JSON **no se suben al repo**: cada firmante debe pasárselo al
+> coordinador manualmente. El coordinador los copia a su propia carpeta `data\public\` antes
+> del paso 5.
+>
+> Ejecuta el comando **desde la raíz del proyecto** (`cd entropy-arena`, con el `.venv`
+> activado); si lo ejecutas desde otra carpeta, los archivos se crean igualmente dentro del
+> proyecto, no donde estés parado.
 
 Bonus de dados (opcional; primero registra tus tiradas reales):
 ```powershell
