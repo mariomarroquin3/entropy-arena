@@ -72,3 +72,16 @@ def test_derive_address_rejects_wrong_branch():
     info = parse_multisig_descriptor(d)
     with pytest.raises(ValueError):
         derive_address(info, 1, 0)
+
+
+def test_descriptor_hardened_marker_and_order_change_text_not_wallet():
+    from entropy_arena.wallet.descriptor import parse_multisig_descriptor, derive_address
+    sg = _signers(_three())
+    d_apos = multisig_descriptor(2, sg, "0")
+    d_h = multisig_descriptor(2, sg, "0", hardened="h")
+    assert "48h/1h/0h/2h" in d_h and "48'/1'/0'/2'" in d_apos
+    assert d_apos.split("#")[1] != d_h.split("#")[1]           # el checksum cambia con el texto
+    a1 = derive_address(parse_multisig_descriptor(d_apos), 0, 0)["address"]
+    a2 = derive_address(parse_multisig_descriptor(d_h), 0, 0)["address"]
+    a3 = derive_address(parse_multisig_descriptor(multisig_descriptor(2, sg[::-1], "0", "h")), 0, 0)["address"]
+    assert a1 == a2 == a3                                       # misma wallet (sortedmulti)

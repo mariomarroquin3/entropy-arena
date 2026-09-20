@@ -1,6 +1,9 @@
 """Coordinador: combina los JSON públicos de los firmantes en el descriptor de la wallet.
 
 Uso: python experiments/build_descriptor.py data/public/signer_a.json ... [--threshold 2]
+
+Para que el descriptor sea IDÉNTICO al de Sparrow, pasa los JSON en el mismo orden que los
+keystores de la wallet en Sparrow (el orden se respeta) y deja --hardened h (por defecto).
 """
 import argparse
 import json
@@ -19,6 +22,8 @@ def main():
     ap.add_argument("files", nargs="+")
     ap.add_argument("--threshold", type=int, default=2)
     ap.add_argument("--count", type=int, default=3)
+    ap.add_argument("--hardened", choices=["h", "'"], default="h",
+                    help="marca de paso endurecido: h (como Sparrow, por defecto) o '")
     a = ap.parse_args()
 
     pubs = [json.loads(Path(f).read_text(encoding="utf-8")) for f in a.files]
@@ -32,9 +37,9 @@ def main():
     signers = [{"fingerprint": p["master_fingerprint"], "path": p["path"], "xpub": p["xpub"]}
                for p in pubs]
 
-    multi = multisig_descriptor(a.threshold, signers, "<0;1>")
-    recv = multisig_descriptor(a.threshold, signers, "0")
-    change = multisig_descriptor(a.threshold, signers, "1")
+    multi = multisig_descriptor(a.threshold, signers, "<0;1>", a.hardened)
+    recv = multisig_descriptor(a.threshold, signers, "0", a.hardened)
+    change = multisig_descriptor(a.threshold, signers, "1", a.hardened)
     out = ROOT / "data" / "public" / "wallet_descriptor.txt"
     out.write_text(f"network: {net}\nmultipath: {multi}\nreceive:   {recv}\nchange:    {change}\n",
                    encoding="utf-8")

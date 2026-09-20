@@ -54,10 +54,14 @@ def key_origin(fingerprint_hex: str, path: str, xpub: str, branch: str) -> str:
     return f"[{fingerprint_hex}/{path}]{xpub}/{branch}/*"
 
 
-def multisig_descriptor(threshold: int, signers: list, branch: str = "<0;1>") -> str:
-    """signers: [{'fingerprint','path','xpub'}, ...]. branch: '<0;1>', '0' o '1'."""
-    keys = ",".join(key_origin(s["fingerprint"], s["path"].removeprefix("m/"), s["xpub"], branch)
-                    for s in signers)
+def multisig_descriptor(threshold: int, signers: list, branch: str = "<0;1>",
+                        hardened: str = "'") -> str:
+    """signers: [{'fingerprint','path','xpub'}, ...]. branch: '<0;1>', '0' o '1'.
+    hardened: marca de paso endurecido, "'" (por defecto) o "h" (como escribe Sparrow).
+    El orden de `signers` se respeta tal cual: el checksum depende del texto exacto."""
+    keys = ",".join(key_origin(s["fingerprint"],
+                               s["path"].removeprefix("m/").replace("'", hardened),
+                               s["xpub"], branch) for s in signers)
     body = f"wsh(sortedmulti({threshold},{keys}))"
     return f"{body}#{checksum(body)}"
 
