@@ -772,6 +772,85 @@ whose $8$-character checksum $c$ is a BCH code (BIP380) that detects transcripti
 It contains fingerprints, origin paths, extended public keys and policy, and
 none of the private material.
 
+\subsection{Spending logic: the policy as a Boolean formula}\label{sec:spending}
+
+Let $\sigma_A,\sigma_B,\sigma_C\in\{0,1\}$ indicate whether a valid signature
+of the corresponding key on the transaction $T$ is supplied. The $2$-of-$3$
+policy encoded in the descriptor is the Boolean formula
+\begin{equation}\label{eq:dnf}
+    \mathrm{Spend}(T)\;=\;(\sigma_A\wedge\sigma_B)\ \vee\ (\sigma_A\wedge\sigma_C)\ \vee\ (\sigma_B\wedge\sigma_C).
+\end{equation}
+If \emph{any} parenthesis evaluates to $1$ the output can be spent; each
+parenthesis is a \emph{minimal authorized set}, and no single key is one.
+For a general $t$-of-$n$ policy the formula is the disjunction, over the
+$\binom{n}{t}$ subsets of size $t$, of the conjunction of the signatures in the
+subset ($3$ clauses for $2$-of-$3$, $10$ for $3$-of-$5$).
+
+\begin{proposition}[DNF $=$ threshold]\label{prop:dnf}
+Equation~\eqref{eq:dnf} holds if and only if $\sigma_A+\sigma_B+\sigma_C\ge2$.
+\end{proposition}
+\begin{proof}
+If some pair has both signatures, the sum is at least $2$. Conversely, a sum of
+at least $2$ among three binary values means at least two of them equal $1$,
+and those two form one of the three clauses.
+\end{proof}
+
+The threshold form $\sum_i\sigma_i\ge t$ is what
+\texttt{OP\_CHECKMULTISIG} evaluates, and it is why the descriptor uses the
+compact \texttt{sortedmulti(2,$K_A$,$K_B$,$K_C$)}: a naive translation of
+Eq.~\eqref{eq:dnf} into script (\texttt{or(and(pk(A),pk(B)),\ldots)}) is
+logically equivalent but repeats every key twice ($6$ key slots instead of $3$),
+enlarging the witness script and therefore the fees. The two forms accept
+exactly the same transactions.
+
+\begin{table}[H]
+\centering
+\caption{Truth table of the $2$-of-$3$ policy ($1$ = valid signature supplied).}
+\label{tab:truth}
+\begin{tabular}{ccc c l}
+\toprule
+$\sigma_A$ & $\sigma_B$ & $\sigma_C$ & Spend & Clause satisfied \\
+\midrule
+0 & 0 & 0 & 0 & --- \\
+1 & 0 & 0 & 0 & none (a key alone is not enough) \\
+0 & 1 & 0 & 0 & none \\
+0 & 0 & 1 & 0 & none \\
+1 & 1 & 0 & 1 & $\sigma_A\wedge\sigma_B$ \\
+1 & 0 & 1 & 1 & $\sigma_A\wedge\sigma_C$ \\
+0 & 1 & 1 & 1 & $\sigma_B\wedge\sigma_C$ \\
+1 & 1 & 1 & 1 & all three (redundant) \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{What this answers.} The formula and its truth table answer two of the
+three questions a reviewer can ask:
+\begin{enumerate}[label=(\arabic*),leftmargin=*]
+    \item \emph{What exact condition protects the funds?} Eq.~\eqref{eq:dnf}:
+    at least two of the three keys must sign the same transaction.
+    \item \emph{What happens if signers are lost or compromised?} Read it off
+    Table~\ref{tab:truth}. Let $\ell$ be the number of keys lost and $c$ the
+    number an adversary controls. The legitimate owners can still spend iff
+    $n-\ell\ge t$, and the adversary can spend iff $c\ge t$. For $2$-of-$3$:
+    losing one key leaves exactly one clause satisfiable by the two remaining
+    keys (no single point of failure; migrate to a fresh wallet); losing two
+    satisfies no clause and the funds are locked; one compromised key satisfies
+    no clause on its own; two compromised keys satisfy one clause and the funds
+    can be stolen.
+\end{enumerate}
+The third question (what public information is enough to reconstruct the wallet
+without being able to spend) is answered by the descriptor itself: it fixes the
+policy $t$, the origin paths, the fingerprints and the extended public keys, so
+CKDpub yields every address and witness script, but it contains no
+$\sigma_i$-producing material (Section~\ref{sec:pipeline}).
+
+\paragraph{Empirical check.} The \texttt{regtest} end-to-end run
+(\texttt{experiments/regtest\_e2e.py}) exercises every row of
+Table~\ref{tab:truth} that matters against Bitcoin Core: each key alone fails to
+finalize the PSBT ($3$ rows), and each of the three pairs
+($A{+}B$, $A{+}C$, $B{+}C$) finalizes and yields a valid transaction whose
+witness is $[\varnothing,\sigma_i,\sigma_j,\text{witnessScript}]$.
+
 \subsection{Verification chain}
 
 Every layer is validated against independent implementations: BIP32 test

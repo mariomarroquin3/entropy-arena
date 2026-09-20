@@ -186,6 +186,10 @@ def run(node: Node):
     check(fin["complete"], "con 2 firmas (ana+beto) el PSBT se finaliza")
     other = node.call("combinepsbt", json.dumps([signed["beto"], signed["carla"]]))
     check(node.call("finalizepsbt", other)["complete"], "cualquier par sirve (beto+carla)")
+    third = node.call("combinepsbt", json.dumps([signed["ana"], signed["carla"]]))
+    check(node.call("finalizepsbt", third)["complete"], "cualquier par sirve (ana+carla): las 3 cláusulas (A y B) o (A y C) o (B y C)")
+    for solo in ("ana", "beto", "carla"):
+        check(not node.call("finalizepsbt", signed[solo])["complete"], f"{solo} sola NO puede gastar")
 
     # --- 8. Transmisión y confirmación
     step("Transmisión")
