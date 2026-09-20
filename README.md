@@ -11,7 +11,7 @@ medidas independientes:
 | **Calidad** (0-100) | Cuánto *parece* aleatorio | NIST SP 800-22: proporción de muestras que pasan + uniformidad de p-values; min-entropy MCV |
 | **Bits reales** | Entropía genuina por muestra | Semilla / entrada física / estimadores SP 800-90B |
 
-Veredicto: `APTO` (calidad ≥ 90 y ≥ 128 bits reales), `IMITA AZAR` (pasa los tests
+Veredicto: `APTO` (calidad ≥ 85 y ≥ 128 bits reales), `IMITA AZAR` (pasa los tests
 pero con < 128 bits, p. ej. Mersenne Twister, π, Lorenz, RANDU) o `FALLA TESTS`.
 
 ## Instalación
@@ -73,6 +73,16 @@ mínimo. Desviaciones respecto al estándar en el docstring de `analysis/sp800_9
   NIST y los tests de estructura sobre la secuencia concatenada, pero el flujo de un mismo bit de
   palabras de 32 bits tiene complejidad lineal 19937 << n/2 y se detecta. Es el único test genérico
   de la batería que lo distingue de un CSPRNG.
+
+## Resultados reproducibles
+
+La carpeta [`results/`](results) contiene la salida de la última ejecución completa:
+`leaderboard.json`, `ranking.png`, `metric_matrix.png` (arena, 100 muestras x 100 kbit),
+`estimators.txt` (`experiments/validate_estimators.py`), `structure_tests.txt`, `attacks.txt`,
+`regtest_e2e.txt` (2-de-3 con Bitcoin Core) y `pytest.txt`. El documento
+[`docs/methodology.tex`](docs/methodology.tex) (PDF: `docs/methodology.pdf`) explica las
+métricas, la física de cada fuente y estos resultados. Umbral del veredicto: un solo test
+fallido por azar no descalifica (Q >= 85); dos o más sí.
 
 ## Limitaciones conocidas
 

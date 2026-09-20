@@ -1,0 +1,46 @@
+
+[Nodo]
+  OK   nodo en regtest (bloques=0)
+
+[Firmantes]
+  ana: fp=c4caa926  tpubDFFmXGx4KZwb...
+  beto: fp=659576d3  tpubDE9MEzMrrBfK...
+  carla: fp=e3a604d4  tpubDERVNrJVKRBv...
+  OK   3 firmantes con claves distintas
+
+[Wallets en Core]
+  OK   wallet 'coord' importada
+  OK   wallet 'sign_ana' importada
+  OK   wallet 'sign_beto' importada
+  OK   wallet 'sign_carla' importada
+
+[Watch-only: dirección propia vs Core]
+  OK   bcrt1q5g7vjxg27c66yka4ery9zpxftr0359kxncvdq32q35utnwea4r2sk8p7z6
+
+[Fondeo]
+  OK   coord ve 1.0 BTC en la wallet 2-de-3 (tx b63fb3873d65...)
+
+[PSBT]
+  OK   PSBT creado por el coordinador (fee 3.78e-05 BTC)
+  OK   el PSBT inicial no trae firmas
+
+[Firmas independientes]
+  ana: 1 firma(s) en su copia; completo=False
+  OK   ana aporta exactamente 1 firma
+  beto: 1 firma(s) en su copia; completo=False
+  OK   beto aporta exactamente 1 firma
+  carla: 1 firma(s) en su copia; completo=False
+  OK   carla aporta exactamente 1 firma
+
+[Umbral]
+  OK   con 1 sola firma el PSBT NO se puede finalizar
+  OK   con 2 firmas (ana+beto) el PSBT se finaliza
+  OK   cualquier par sirve (beto+carla)
+
+[Transmisión]
+  OK   tx 64a16b87645b524c... confirmada
+  OK   witness = [vacío, firma, firma, script]  (2 firmas + witnessScript)
+  OK   el witnessScript gastado es exactamente el que derivó nuestro código
+
+TODO OK: 2-de-3 funcional en regtest (umbral aplicado, firmas independientes, watch-only coincide).
+EXIT:0

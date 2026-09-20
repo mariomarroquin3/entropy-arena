@@ -1,0 +1,11 @@
+
+Ataque                              Observado   Éxito    Tiempo
+----------------------------------------------------------------
+MT19937 state recovery                   2496      SÍ     0.02s
+RANDU state recovery                        8      SÍ     0.26s
+pi offset search                           32      SÍ     0.08s
+time-seeded PRNG brute force            86400      SÍ     0.07s
+
+Control: contra secrets/os.urandom no existe un ataque equivalente; observar 2496 bytes no ayuda a predecir el siguiente.
+  ataque MT aplicado a secrets -> éxito: False
+EXIT:0

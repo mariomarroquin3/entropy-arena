@@ -26,6 +26,8 @@ def test_aggregate_uniform_pvalues_pass():
 def test_verdicts():
     assert verdict(100, 256) == "APTO"
     assert verdict(100, 0).startswith("IMITA")
+    assert verdict(90, 256) == "APTO"          # un solo test fallido por azar no descalifica
+    assert verdict(80, 256).startswith("FALLA")  # dos tests fallidos sí
     assert verdict(10, 0).startswith("FALLA")
 
 

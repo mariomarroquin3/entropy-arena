@@ -66,8 +66,13 @@ def compute_quality(tests: dict, min_ent: float, min_ent_ref: float) -> float:
     return round(100.0 * (0.7 * frac_ok + 0.3 * ent_ratio), 2)
 
 
+# Con 7 tests x 2 criterios, una fuente IDEAL falla algún criterio con probabilidad no
+# despreciable (Q=90 = un test fallido). Se exige >= 2 tests fallidos (Q < 85) para rechazar.
+LOOKS_RANDOM_Q = 85.0
+
+
 def verdict(quality: float, real_bits: float) -> str:
-    looks = quality >= 90
+    looks = quality >= LOOKS_RANDOM_Q
     strong = real_bits >= MIN_SEED_BITS
     if looks and strong:
         return "APTO"

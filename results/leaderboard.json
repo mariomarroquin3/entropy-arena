@@ -1,0 +1,1362 @@
+[
+  {
+    "method": "randu_lcg",
+    "category": "computational",
+    "deterministic": true,
+    "score": 100.0,
+    "real_bits": 30.0,
+    "verdict": "IMITA AZAR (entrop\u00eda real insuficiente)",
+    "metrics": {
+      "shannon": 7.985442264004921,
+      "min_entropy": 7.106807512767299,
+      "collision": 7.971278503922821,
+      "compress": 1.0008759999999999,
+      "autocorr": 0.0016870958087952146,
+      "monobit_p": 0.44612443503897675,
+      "runs_p": 0.5458570470296897,
+      "block_frequency_p": 0.5088529690054353,
+      "cumulative_sums_fwd_p": 0.4465074122584462,
+      "cumulative_sums_bwd_p": 0.4650972664307567,
+      "longest_run_ones_p": 0.5125640710672048,
+      "chi2_bytes_p": 0.5439879911540801
+    },
+    "tests": {
+      "monobit": {
+        "pass_rate": 0.98,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.7197465748240341,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "runs": {
+        "pass_rate": 0.98,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.5544204358728568,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "block_frequency": {
+        "pass_rate": 1.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.6579333062136289,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "cumulative_sums_fwd": {
+        "pass_rate": 0.97,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.17186683746684372,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "cumulative_sums_bwd": {
+        "pass_rate": 0.98,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.11538658258886127,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "longest_run_ones": {
+        "pass_rate": 1.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.3669177991127526,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "chi2_bytes": {
+        "pass_rate": 1.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.7399182920946538,
+        "uniformity_ok": true,
+        "ok": true
+      }
+    },
+    "samples_ok": 100,
+    "samples_failed": 0,
+    "samples_repeated": 0,
+    "note": null,
+    "elapsed_s": 5.905
+  },
+  {
+    "method": "random.getrandbits (Mersenne Twister)",
+    "category": "computational",
+    "deterministic": true,
+    "score": 99.99,
+    "real_bits": 0.0,
+    "verdict": "IMITA AZAR (entrop\u00eda real insuficiente)",
+    "metrics": {
+      "shannon": 7.985365771744707,
+      "min_entropy": 7.10564821210545,
+      "collision": 7.971113736495603,
+      "compress": 1.00088,
+      "autocorr": 0.0008565232346850833,
+      "monobit_p": 0.49757887426615566,
+      "runs_p": 0.5562218475649378,
+      "block_frequency_p": 0.5030442341546834,
+      "cumulative_sums_fwd_p": 0.5048683694661809,
+      "cumulative_sums_bwd_p": 0.5289586821573624,
+      "longest_run_ones_p": 0.5244028724903802,
+      "chi2_bytes_p": 0.527133710010588
+    },
+    "tests": {
+      "monobit": {
+        "pass_rate": 1.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.3504852123233613,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "runs": {
+        "pass_rate": 0.98,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.07117740939106257,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "block_frequency": {
+        "pass_rate": 1.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.40119928658025733,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "cumulative_sums_fwd": {
+        "pass_rate": 1.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.019187597983006063,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "cumulative_sums_bwd": {
+        "pass_rate": 1.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.40119928658025733,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "longest_run_ones": {
+        "pass_rate": 1.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.3669177991127526,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "chi2_bytes": {
+        "pass_rate": 0.99,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.0909359765798051,
+        "uniformity_ok": true,
+        "ok": true
+      }
+    },
+    "samples_ok": 100,
+    "samples_failed": 0,
+    "samples_repeated": 0,
+    "note": null,
+    "elapsed_s": 5.549
+  },
+  {
+    "method": "logistic_map",
+    "category": "mathematical",
+    "deterministic": true,
+    "score": 99.99,
+    "real_bits": 64.0,
+    "verdict": "IMITA AZAR (entrop\u00eda real insuficiente)",
+    "metrics": {
+      "shannon": 7.985144683145567,
+      "min_entropy": 7.103765502677508,
+      "collision": 7.970708310925962,
+      "compress": 1.00088,
+      "autocorr": -0.0011812093822048668,
+      "monobit_p": 0.4966887704259408,
+      "runs_p": 0.5294801787905706,
+      "block_frequency_p": 0.5154645546416223,
+      "cumulative_sums_fwd_p": 0.5250883778995626,
+      "cumulative_sums_bwd_p": 0.5226849850122283,
+      "longest_run_ones_p": 0.4819238043606181,
+      "chi2_bytes_p": 0.47547192635779756
+    },
+    "tests": {
+      "monobit": {
+        "pass_rate": 1.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.5749034238644555,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "runs": {
+        "pass_rate": 1.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.14532611574989807,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "block_frequency": {
+        "pass_rate": 1.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.10252568021404776,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "cumulative_sums_fwd": {
+        "pass_rate": 1.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.16260626219029933,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "cumulative_sums_bwd": {
+        "pass_rate": 1.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.025192895081668946,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "longest_run_ones": {
+        "pass_rate": 0.99,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.3669177991127526,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "chi2_bytes": {
+        "pass_rate": 0.98,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.2022676854058257,
+        "uniformity_ok": true,
+        "ok": true
+      }
+    },
+    "samples_ok": 100,
+    "samples_failed": 0,
+    "samples_repeated": 0,
+    "note": null,
+    "elapsed_s": 9.948
+  },
+  {
+    "method": "pi_binary_digits",
+    "category": "mathematical",
+    "deterministic": true,
+    "score": 99.98,
+    "real_bits": 22.9,
+    "verdict": "IMITA AZAR (entrop\u00eda real insuficiente)",
+    "metrics": {
+      "shannon": 7.984985654713458,
+      "min_entropy": 7.1024226290976875,
+      "collision": 7.970418618463161,
+      "compress": 1.00088,
+      "autocorr": -0.00010545520704843285,
+      "monobit_p": 0.49504849286358044,
+      "runs_p": 0.5083215085997339,
+      "block_frequency_p": 0.5018556703989016,
+      "cumulative_sums_fwd_p": 0.4822938401938675,
+      "cumulative_sums_bwd_p": 0.532856085060845,
+      "longest_run_ones_p": 0.5026509531840382,
+      "chi2_bytes_p": 0.43724970169578464
+    },
+    "tests": {
+      "monobit": {
+        "pass_rate": 0.99,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.6163052249833654,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "runs": {
+        "pass_rate": 0.98,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.1916867408469657,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "block_frequency": {
+        "pass_rate": 0.99,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.3669177991127526,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "cumulative_sums_fwd": {
+        "pass_rate": 1.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.6163052249833653,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "cumulative_sums_bwd": {
+        "pass_rate": 0.98,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.6371194071693984,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "longest_run_ones": {
+        "pass_rate": 0.99,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.7197465748240339,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "chi2_bytes": {
+        "pass_rate": 0.98,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.5955485072842059,
+        "uniformity_ok": true,
+        "ok": true
+      }
+    },
+    "samples_ok": 100,
+    "samples_failed": 0,
+    "samples_repeated": 0,
+    "note": null,
+    "elapsed_s": 106.064
+  },
+  {
+    "method": "cpu_timing_jitter_sha256",
+    "category": "physical",
+    "deterministic": false,
+    "score": 99.98,
+    "real_bits": 12403.9,
+    "verdict": "APTO",
+    "metrics": {
+      "shannon": 7.98516630199709,
+      "min_entropy": 7.101714748197497,
+      "collision": 7.970717921633158,
+      "compress": 1.00088,
+      "autocorr": 0.0009278036094925051,
+      "monobit_p": 0.5040577851317461,
+      "runs_p": 0.48139015063129237,
+      "block_frequency_p": 0.4790902323200809,
+      "cumulative_sums_fwd_p": 0.47527673755917066,
+      "cumulative_sums_bwd_p": 0.4765716847987441,
+      "longest_run_ones_p": 0.5239463613105926,
+      "chi2_bytes_p": 0.4886452148205034
+    },
+    "tests": {
+      "monobit": {
+        "pass_rate": 0.99,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.40119928658025733,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "runs": {
+        "pass_rate": 1.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.7597562788720695,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "block_frequency": {
+        "pass_rate": 1.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.9558347256002608,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "cumulative_sums_fwd": {
+        "pass_rate": 1.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.946307673764427,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "cumulative_sums_bwd": {
+        "pass_rate": 0.99,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.6163052249833652,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "longest_run_ones": {
+        "pass_rate": 0.99,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.7981390623953615,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "chi2_bytes": {
+        "pass_rate": 0.99,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.8165367975972473,
+        "uniformity_ok": true,
+        "ok": true
+      }
+    },
+    "samples_ok": 100,
+    "samples_failed": 0,
+    "samples_repeated": 0,
+    "note": null,
+    "elapsed_s": 183.33
+  },
+  {
+    "method": "os.urandom",
+    "category": "computational",
+    "deterministic": false,
+    "score": 99.96,
+    "real_bits": 100000.0,
+    "verdict": "APTO",
+    "metrics": {
+      "shannon": 7.985057011039382,
+      "min_entropy": 7.0975396756025075,
+      "collision": 7.970532554019884,
+      "compress": 1.00088,
+      "autocorr": -0.0009667545132263692,
+      "monobit_p": 0.4836911873029204,
+      "runs_p": 0.4769156271081071,
+      "block_frequency_p": 0.5184628257182269,
+      "cumulative_sums_fwd_p": 0.5161928980001954,
+      "cumulative_sums_bwd_p": 0.49081916232379824,
+      "longest_run_ones_p": 0.453207533551292,
+      "chi2_bytes_p": 0.4573763991124809
+    },
+    "tests": {
+      "monobit": {
+        "pass_rate": 0.99,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.12961959133276194,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "runs": {
+        "pass_rate": 0.99,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.7197465748240341,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "block_frequency": {
+        "pass_rate": 0.98,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.8165367975972473,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "cumulative_sums_fwd": {
+        "pass_rate": 0.99,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.971699157102865,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "cumulative_sums_bwd": {
+        "pass_rate": 0.99,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.4749856866480098,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "longest_run_ones": {
+        "pass_rate": 0.97,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.40119928658025733,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "chi2_bytes": {
+        "pass_rate": 0.98,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.22482064155775416,
+        "uniformity_ok": true,
+        "ok": true
+      }
+    },
+    "samples_ok": 100,
+    "samples_failed": 0,
+    "samples_repeated": 0,
+    "note": null,
+    "elapsed_s": 6.157
+  },
+  {
+    "method": "rule30_cellular_automaton",
+    "category": "mathematical",
+    "deterministic": true,
+    "score": 99.95,
+    "real_bits": 64.0,
+    "verdict": "IMITA AZAR (entrop\u00eda real insuficiente)",
+    "metrics": {
+      "shannon": 7.985095055956577,
+      "min_entropy": 7.095780983476682,
+      "collision": 7.970607562677899,
+      "compress": 1.00088,
+      "autocorr": 0.0013944339760542644,
+      "monobit_p": 0.4997306906887326,
+      "runs_p": 0.4421187158375174,
+      "block_frequency_p": 0.5009958546493639,
+      "cumulative_sums_fwd_p": 0.4936566506887347,
+      "cumulative_sums_bwd_p": 0.5272228253192578,
+      "longest_run_ones_p": 0.5209803366979088,
+      "chi2_bytes_p": 0.4747907302167219
+    },
+    "tests": {
+      "monobit": {
+        "pass_rate": 1.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.40119928658025733,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "runs": {
+        "pass_rate": 0.98,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.6371194071693984,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "block_frequency": {
+        "pass_rate": 0.99,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.6371194071693984,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "cumulative_sums_fwd": {
+        "pass_rate": 1.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.6993125708664081,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "cumulative_sums_bwd": {
+        "pass_rate": 1.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.7197465748240341,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "longest_run_ones": {
+        "pass_rate": 1.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.2896674903884787,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "chi2_bytes": {
+        "pass_rate": 0.99,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.27570893677222197,
+        "uniformity_ok": true,
+        "ok": true
+      }
+    },
+    "samples_ok": 100,
+    "samples_failed": 0,
+    "samples_repeated": 0,
+    "note": null,
+    "elapsed_s": 436.609
+  },
+  {
+    "method": "numpy_pcg64",
+    "category": "computational",
+    "deterministic": true,
+    "score": 99.95,
+    "real_bits": 128.0,
+    "verdict": "APTO",
+    "metrics": {
+      "shannon": 7.9852730562551,
+      "min_entropy": 7.096367564427923,
+      "collision": 7.970940149507948,
+      "compress": 1.00088,
+      "autocorr": 0.0011343865217424624,
+      "monobit_p": 0.516386710298389,
+      "runs_p": 0.5452079050673935,
+      "block_frequency_p": 0.4831019302522301,
+      "cumulative_sums_fwd_p": 0.47923738703095126,
+      "cumulative_sums_bwd_p": 0.4938040958926153,
+      "longest_run_ones_p": 0.49165431550094996,
+      "chi2_bytes_p": 0.49854335477932155
+    },
+    "tests": {
+      "monobit": {
+        "pass_rate": 1.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.8165367975972474,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "runs": {
+        "pass_rate": 1.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.4943916864821225,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "block_frequency": {
+        "pass_rate": 1.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.7597562788720693,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "cumulative_sums_fwd": {
+        "pass_rate": 1.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.5955485072842059,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "cumulative_sums_bwd": {
+        "pass_rate": 1.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.7791877161648362,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "longest_run_ones": {
+        "pass_rate": 0.97,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.048715976147641296,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "chi2_bytes": {
+        "pass_rate": 1.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.4749856866480098,
+        "uniformity_ok": true,
+        "ok": true
+      }
+    },
+    "samples_ok": 100,
+    "samples_failed": 0,
+    "samples_repeated": 0,
+    "note": null,
+    "elapsed_s": 5.576
+  },
+  {
+    "method": "xor(random.getrandbits+os.urandom)",
+    "category": "hybrid",
+    "deterministic": false,
+    "score": 99.95,
+    "real_bits": 100000.0,
+    "verdict": "APTO",
+    "metrics": {
+      "shannon": 7.985054952691459,
+      "min_entropy": 7.095350931485371,
+      "collision": 7.970485907434036,
+      "compress": 1.00088,
+      "autocorr": -0.0016921450045143183,
+      "monobit_p": 0.5284567251970035,
+      "runs_p": 0.4453029279838839,
+      "block_frequency_p": 0.5369835152553706,
+      "cumulative_sums_fwd_p": 0.5253768081431928,
+      "cumulative_sums_bwd_p": 0.5365252262600207,
+      "longest_run_ones_p": 0.44583862955781517,
+      "chi2_bytes_p": 0.4470358220321618
+    },
+    "tests": {
+      "monobit": {
+        "pass_rate": 0.98,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.21330930508341653,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "runs": {
+        "pass_rate": 0.99,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.24928389397664882,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "block_frequency": {
+        "pass_rate": 1.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.23680981521773165,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "cumulative_sums_fwd": {
+        "pass_rate": 0.99,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.6993125708664081,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "cumulative_sums_bwd": {
+        "pass_rate": 0.99,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.07117740939106257,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "longest_run_ones": {
+        "pass_rate": 0.99,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.30412581641191044,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "chi2_bytes": {
+        "pass_rate": 1.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.03756608354257083,
+        "uniformity_ok": true,
+        "ok": true
+      }
+    },
+    "samples_ok": 100,
+    "samples_failed": 0,
+    "samples_repeated": 0,
+    "note": null,
+    "elapsed_s": 6.011
+  },
+  {
+    "method": "xor(random.getrandbits+brownian_motion+cpu_timing_jitter_sha256)",
+    "category": "hybrid",
+    "deterministic": false,
+    "score": 99.94,
+    "real_bits": 13183.4,
+    "verdict": "APTO",
+    "metrics": {
+      "shannon": 7.9850188487429845,
+      "min_entropy": 7.093959246710558,
+      "collision": 7.970450754525298,
+      "compress": 1.00088,
+      "autocorr": -5.379075709470606e-05,
+      "monobit_p": 0.5330769198803708,
+      "runs_p": 0.4702065283040509,
+      "block_frequency_p": 0.4574090005105921,
+      "cumulative_sums_fwd_p": 0.5398268032544716,
+      "cumulative_sums_bwd_p": 0.533451289971978,
+      "longest_run_ones_p": 0.44102658980166387,
+      "chi2_bytes_p": 0.4436865843686713
+    },
+    "tests": {
+      "monobit": {
+        "pass_rate": 0.99,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.7981390623953614,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "runs": {
+        "pass_rate": 0.97,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.3345381516340061,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "block_frequency": {
+        "pass_rate": 0.97,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.2022676854058257,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "cumulative_sums_fwd": {
+        "pass_rate": 1.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.6786857852960748,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "cumulative_sums_bwd": {
+        "pass_rate": 1.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.43727418891386693,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "longest_run_ones": {
+        "pass_rate": 1.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.026948185023042272,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "chi2_bytes": {
+        "pass_rate": 0.99,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.13728235312658452,
+        "uniformity_ok": true,
+        "ok": true
+      }
+    },
+    "samples_ok": 100,
+    "samples_failed": 0,
+    "samples_repeated": 0,
+    "note": null,
+    "elapsed_s": 192.521
+  },
+  {
+    "method": "brownian_motion",
+    "category": "mathematical",
+    "deterministic": true,
+    "score": 99.91,
+    "real_bits": 64.0,
+    "verdict": "IMITA AZAR (entrop\u00eda real insuficiente)",
+    "metrics": {
+      "shannon": 7.985251006519348,
+      "min_entropy": 7.086786521231527,
+      "collision": 7.970903364702829,
+      "compress": 1.00088,
+      "autocorr": 6.339418723826417e-05,
+      "monobit_p": 0.44247646266485885,
+      "runs_p": 0.5069801881597109,
+      "block_frequency_p": 0.5558374337258103,
+      "cumulative_sums_fwd_p": 0.46761290534351085,
+      "cumulative_sums_bwd_p": 0.4477930677414056,
+      "longest_run_ones_p": 0.4733062214661632,
+      "chi2_bytes_p": 0.5071447237734398
+    },
+    "tests": {
+      "monobit": {
+        "pass_rate": 0.97,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.22482064155775416,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "runs": {
+        "pass_rate": 0.98,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.6993125708664081,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "block_frequency": {
+        "pass_rate": 0.99,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.012650421350015558,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "cumulative_sums_fwd": {
+        "pass_rate": 0.98,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.9357164109139732,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "cumulative_sums_bwd": {
+        "pass_rate": 1.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.6371194071693984,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "longest_run_ones": {
+        "pass_rate": 1.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.2022676854058257,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "chi2_bytes": {
+        "pass_rate": 0.99,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.7597562788720693,
+        "uniformity_ok": true,
+        "ok": true
+      }
+    },
+    "samples_ok": 100,
+    "samples_failed": 0,
+    "samples_repeated": 0,
+    "note": null,
+    "elapsed_s": 6.211
+  },
+  {
+    "method": "random.getrandbits (Mersenne Twister)",
+    "category": "computational",
+    "deterministic": true,
+    "score": 89.99,
+    "real_bits": 0.0,
+    "verdict": "IMITA AZAR (entrop\u00eda real insuficiente)",
+    "metrics": {
+      "shannon": 7.985296185854739,
+      "min_entropy": 7.1051657374583215,
+      "collision": 7.971034237208816,
+      "compress": 1.00088,
+      "autocorr": 9.630285161974036e-05,
+      "monobit_p": 0.43836537945243714,
+      "runs_p": 0.4783272128858523,
+      "block_frequency_p": 0.5099453455614589,
+      "cumulative_sums_fwd_p": 0.4261205133094083,
+      "cumulative_sums_bwd_p": 0.43857013957912777,
+      "longest_run_ones_p": 0.4645733947675128,
+      "chi2_bytes_p": 0.5160069152878219
+    },
+    "tests": {
+      "monobit": {
+        "pass_rate": 0.97,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.21330930508341653,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "runs": {
+        "pass_rate": 0.99,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.14532611574989826,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "block_frequency": {
+        "pass_rate": 0.97,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.971699157102865,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "cumulative_sums_fwd": {
+        "pass_rate": 0.99,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.11538658258886124,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "cumulative_sums_bwd": {
+        "pass_rate": 0.96,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": false,
+        "uniformity_p": 0.21330930508341653,
+        "uniformity_ok": true,
+        "ok": false
+      },
+      "longest_run_ones": {
+        "pass_rate": 0.99,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.18155663198089633,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "chi2_bytes": {
+        "pass_rate": 1.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.43727418891386693,
+        "uniformity_ok": true,
+        "ok": true
+      }
+    },
+    "samples_ok": 100,
+    "samples_failed": 0,
+    "samples_repeated": 0,
+    "note": null,
+    "elapsed_s": 5.957
+  },
+  {
+    "method": "secrets.token_bytes",
+    "category": "computational",
+    "deterministic": false,
+    "score": 89.94,
+    "real_bits": 100000.0,
+    "verdict": "APTO",
+    "metrics": {
+      "shannon": 7.985062714104693,
+      "min_entropy": 7.093458956321947,
+      "collision": 7.9705009917798755,
+      "compress": 1.00088,
+      "autocorr": 0.00016566502799024636,
+      "monobit_p": 0.4856729770011727,
+      "runs_p": 0.4412517237621477,
+      "block_frequency_p": 0.504380022491923,
+      "cumulative_sums_fwd_p": 0.45108838894573644,
+      "cumulative_sums_bwd_p": 0.4620322730721857,
+      "longest_run_ones_p": 0.49442426495083963,
+      "chi2_bytes_p": 0.45611675869242224
+    },
+    "tests": {
+      "monobit": {
+        "pass_rate": 1.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.8676916714977052,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "runs": {
+        "pass_rate": 0.96,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": false,
+        "uniformity_p": 0.30412581641191044,
+        "uniformity_ok": true,
+        "ok": false
+      },
+      "block_frequency": {
+        "pass_rate": 0.98,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.9780720677116449,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "cumulative_sums_fwd": {
+        "pass_rate": 1.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.7399182920946537,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "cumulative_sums_bwd": {
+        "pass_rate": 1.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.07571926316863387,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "longest_run_ones": {
+        "pass_rate": 0.99,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.946307673764427,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "chi2_bytes": {
+        "pass_rate": 0.99,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.7981390623953614,
+        "uniformity_ok": true,
+        "ok": true
+      }
+    },
+    "samples_ok": 100,
+    "samples_failed": 0,
+    "samples_repeated": 0,
+    "note": null,
+    "elapsed_s": 6.916
+  },
+  {
+    "method": "uuid.uuid4",
+    "category": "computational",
+    "deterministic": false,
+    "score": 37.55,
+    "real_bits": 95312.5,
+    "verdict": "FALLA TESTS",
+    "metrics": {
+      "shannon": 7.947246445117871,
+      "min_entropy": 6.5266000723035935,
+      "collision": 7.8855373579418275,
+      "compress": 1.0008384,
+      "autocorr": -0.0014143297175026736,
+      "monobit_p": 0.00047348745775377036,
+      "runs_p": 4.971202030778357e-06,
+      "block_frequency_p": 0.5779447590704322,
+      "cumulative_sums_fwd_p": 0.0007956105211252547,
+      "cumulative_sums_bwd_p": 0.0008681193417093401,
+      "longest_run_ones_p": 1.7749750488715055e-06,
+      "chi2_bytes_p": 1.6002243440529909e-77
+    },
+    "tests": {
+      "monobit": {
+        "pass_rate": 0.01,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": false,
+        "uniformity_p": 6.186801032394592e-188,
+        "uniformity_ok": false,
+        "ok": false
+      },
+      "runs": {
+        "pass_rate": 0.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": false,
+        "uniformity_p": 6.186801032394592e-188,
+        "uniformity_ok": false,
+        "ok": false
+      },
+      "block_frequency": {
+        "pass_rate": 1.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.0909359765798051,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "cumulative_sums_fwd": {
+        "pass_rate": 0.01,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": false,
+        "uniformity_p": 6.186801032394592e-188,
+        "uniformity_ok": false,
+        "ok": false
+      },
+      "cumulative_sums_bwd": {
+        "pass_rate": 0.01,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": false,
+        "uniformity_p": 6.186801032394592e-188,
+        "uniformity_ok": false,
+        "ok": false
+      },
+      "longest_run_ones": {
+        "pass_rate": 0.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": false,
+        "uniformity_p": 6.186801032394592e-188,
+        "uniformity_ok": false,
+        "ok": false
+      },
+      "chi2_bytes": {
+        "pass_rate": 0.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": false,
+        "uniformity_p": 6.186801032394592e-188,
+        "uniformity_ok": false,
+        "ok": false
+      }
+    },
+    "samples_ok": 100,
+    "samples_failed": 0,
+    "samples_repeated": 0,
+    "note": null,
+    "elapsed_s": 6.12
+  },
+  {
+    "method": "cpu_timing_jitter_raw",
+    "category": "physical",
+    "deterministic": false,
+    "score": 19.75,
+    "real_bits": 11709.0,
+    "verdict": "FALLA TESTS",
+    "metrics": {
+      "shannon": 7.2587156030314635,
+      "min_entropy": 4.677914623048386,
+      "collision": 6.6753188970483555,
+      "compress": 0.8956864,
+      "autocorr": 0.266764258795337,
+      "monobit_p": 0.02214542386067631,
+      "runs_p": 0.0,
+      "block_frequency_p": 1.136383354603569e-230,
+      "cumulative_sums_fwd_p": 1.5588695228467564e-10,
+      "cumulative_sums_bwd_p": 2.2759943798589598e-05,
+      "longest_run_ones_p": 1.4676001323627087e-10,
+      "chi2_bytes_p": 5.969465998963503e-298
+    },
+    "tests": {
+      "monobit": {
+        "pass_rate": 0.06,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": false,
+        "uniformity_p": 2.8993004069920525e-171,
+        "uniformity_ok": false,
+        "ok": false
+      },
+      "runs": {
+        "pass_rate": 0.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": false,
+        "uniformity_p": 6.186801032394592e-188,
+        "uniformity_ok": false,
+        "ok": false
+      },
+      "block_frequency": {
+        "pass_rate": 0.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": false,
+        "uniformity_p": 6.186801032394592e-188,
+        "uniformity_ok": false,
+        "ok": false
+      },
+      "cumulative_sums_fwd": {
+        "pass_rate": 0.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": false,
+        "uniformity_p": 6.186801032394592e-188,
+        "uniformity_ok": false,
+        "ok": false
+      },
+      "cumulative_sums_bwd": {
+        "pass_rate": 0.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": false,
+        "uniformity_p": 6.186801032394592e-188,
+        "uniformity_ok": false,
+        "ok": false
+      },
+      "longest_run_ones": {
+        "pass_rate": 0.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": false,
+        "uniformity_p": 6.186801032394592e-188,
+        "uniformity_ok": false,
+        "ok": false
+      },
+      "chi2_bytes": {
+        "pass_rate": 0.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": false,
+        "uniformity_p": 6.186801032394592e-188,
+        "uniformity_ok": false,
+        "ok": false
+      }
+    },
+    "samples_ok": 100,
+    "samples_failed": 0,
+    "samples_repeated": 0,
+    "note": null,
+    "elapsed_s": 181.389
+  },
+  {
+    "method": "lorenz_attractor",
+    "category": "mathematical",
+    "deterministic": true,
+    "score": 15.11,
+    "real_bits": 64.0,
+    "verdict": "FALLA TESTS + poca entrop\u00eda",
+    "metrics": {
+      "shannon": 2.094558427861012,
+      "min_entropy": 1.2113899332958358,
+      "collision": 1.5031255679243005,
+      "compress": 0.16463999999999998,
+      "autocorr": 0.6684810077902321,
+      "monobit_p": 0.46323587878868255,
+      "runs_p": 0.0,
+      "block_frequency_p": 0.0,
+      "cumulative_sums_fwd_p": 0.3776729175814708,
+      "cumulative_sums_bwd_p": 0.397743171003045,
+      "longest_run_ones_p": 0.0,
+      "chi2_bytes_p": 0.0
+    },
+    "tests": {
+      "monobit": {
+        "pass_rate": 0.97,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": true,
+        "uniformity_p": 0.4559371952206618,
+        "uniformity_ok": true,
+        "ok": true
+      },
+      "runs": {
+        "pass_rate": 0.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": false,
+        "uniformity_p": 6.186801032394592e-188,
+        "uniformity_ok": false,
+        "ok": false
+      },
+      "block_frequency": {
+        "pass_rate": 0.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": false,
+        "uniformity_p": 6.186801032394592e-188,
+        "uniformity_ok": false,
+        "ok": false
+      },
+      "cumulative_sums_fwd": {
+        "pass_rate": 0.95,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": false,
+        "uniformity_p": 0.003447026450327165,
+        "uniformity_ok": true,
+        "ok": false
+      },
+      "cumulative_sums_bwd": {
+        "pass_rate": 0.96,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": false,
+        "uniformity_p": 0.0007567378732232781,
+        "uniformity_ok": true,
+        "ok": false
+      },
+      "longest_run_ones": {
+        "pass_rate": 0.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": false,
+        "uniformity_p": 6.186801032394592e-188,
+        "uniformity_ok": false,
+        "ok": false
+      },
+      "chi2_bytes": {
+        "pass_rate": 0.0,
+        "min_rate": 0.9601503768868014,
+        "prop_ok": false,
+        "uniformity_p": 6.186801032394592e-188,
+        "uniformity_ok": false,
+        "ok": false
+      }
+    },
+    "samples_ok": 100,
+    "samples_failed": 0,
+    "samples_repeated": 0,
+    "note": null,
+    "elapsed_s": 15.155
+  }
+]

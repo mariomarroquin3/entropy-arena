@@ -1,0 +1,13 @@
+
+Método                                   binary_matrix_rank         dft_spectral       approx_entropy    linear_complexity linear_complexity_s3
+-----------------------------------------------------------------------------------------------------------------------------------------------
+secrets.token_bytes                                    90%                 100%                  90%                 100%                 100% 
+numpy_pcg64                                           100%                 100%                 100%                 100%                  90% 
+random.getrandbits (Mersenne Twister)                 100%                 100%                 100%                 100%                   0% 
+randu_lcg                                             100%                 100%                 100%                 100%                 100% 
+pi_binary_digits                                      100%                  90%                 100%                 100%                 100% 
+rule30_cellular_automaton                             100%                 100%                 100%                 100%                     -
+logistic_map                                          100%                 100%                 100%                 100%                     -
+
+(proporción de 10 muestras que pasan; - = no evaluado por coste)
+EXIT:0

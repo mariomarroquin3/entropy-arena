@@ -6,3 +6,7 @@ data/results/*
 !data/results/.gitkeep
 data/public/
 data/manual_rolls/*.csv
+docs/*.aux
+docs/*.log
+docs/*.out
+docs/*.toc

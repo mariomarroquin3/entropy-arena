@@ -1,0 +1,9 @@
+fuente                 verdadera     MCV  min de 10   estimador que manda
+--------------------------------------------------------------------------
+periodica (0110)           0.000   0.988     -0.000   collision
+sesgada P(1)=0.7           0.515   0.509      0.319   compression
+memoria P(rep)=0.8         0.322   0.985      0.168   collision
+os.urandom                 1.000   0.985      0.620   multimmc
+
+RESULTADO: ningún estimador supera el valor verdadero
+EXIT:0
