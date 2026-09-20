@@ -34,7 +34,7 @@ pero con < 128 bits, p. ej. Mersenne Twister, π, Lorenz, RANDU) o `FALLA TESTS`
 
 El script imprime también el descriptor `wsh(sortedmulti(2,…))#checksum` (BIP380). Verificado contra Bitcoin Core 31.1 (`-testnet4`): `getdescriptorinfo` acepta el checksum y `deriveaddresses` devuelve exactamente la misma dirección `tb1q…`.
 
-**Diagrama del flujo:** [docs/DIAGRAMA_FLUJO.md](docs/DIAGRAMA_FLUJO.md). **Assignment multisig con Sparrow (firmantes independientes, xpub, watch-only):** ver [docs/GUIA_ASSIGNMENT.md](docs/GUIA_ASSIGNMENT.md) (`signer_export.py`, `build_descriptor.py`, `verify_watch_only.py`).
+**Checklist de evidencias:** [docs/CHECKLIST_EVIDENCIAS.md](docs/CHECKLIST_EVIDENCIAS.md). **Diagrama del flujo:** [docs/DIAGRAMA_FLUJO.md](docs/DIAGRAMA_FLUJO.md). **Assignment multisig con Sparrow (firmantes independientes, xpub, watch-only):** ver [docs/GUIA_ASSIGNMENT.md](docs/GUIA_ASSIGNMENT.md) (`signer_export.py`, `build_descriptor.py`, `verify_watch_only.py`).
 
 Fuentes para el multisig: `secrets`, `urandom`, `pcg`, `dice`, `coins`. Se **rechaza**
 cualquier fuente con < 128 bits reales (salvo `--allow-weak`) y claves duplicadas.

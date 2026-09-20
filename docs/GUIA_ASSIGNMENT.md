@@ -239,9 +239,14 @@ Output Descriptor*) y comprobar que la dirección 0 coincide.
 
 Copia la dirección de *Receive* (`bcrt1q…`) y envía 1 BTC desde `miner`, luego mina 1 bloque:
 ```powershell
-& $cli @a "-rpcwallet=miner" sendtoaddress <DIRECCION_SPARROW> 1
+& $cli @a "-rpcwallet=miner" sendtoaddress bcrt1qv03jektq6a88pvga605gru6ded68p7kq55amw02mq2jg27w74m5q5t234n 1
 & $cli @a "-rpcwallet=miner" -generate 1
 ```
+Si miner no existe
+"""
+& $cli @a createwallet miner
+& $cli @a "-rpcwallet=miner" -generate 101
+"""
 En Sparrow (*Transactions*/*UTXOs*) debe aparecer 1 BTC con 1 confirmación. **Captura.**
 
 ---
