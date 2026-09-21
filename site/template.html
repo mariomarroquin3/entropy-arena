@@ -1,0 +1,669 @@
+<title>Entropy Arena</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Serif:ital,wght@0,400;0,600;1,400&display=swap">
+<style>
+:root {
+  --bg: #f4f6f9; --surface: #ffffff; --ink: #0c1726; --ink2: #43516a; --muted: #77839a;
+  --rule: #dde2ea; --grid: #e7eaf0; --accent: #0b6a8f; --accent-ink: #ffffff;
+  --good: #0ca30c; --good-text: #006300; --warn: #fab219; --warn-text: #7a5300; --crit: #d03b3b; --crit-text: #a12525;
+  --seq: #2a78d6; --wash: #eef1f6;
+  --sans: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --serif: "IBM Plex Serif", Georgia, "Times New Roman", serif;
+  --mono: "IBM Plex Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0c121b; --surface: #141c28; --ink: #eef2f8; --ink2: #b4bfd2; --muted: #8592a8;
+    --rule: #263142; --grid: #1d2735; --accent: #4cb5dc; --accent-ink: #06202d;
+    --good-text: #3fd04a; --warn-text: #fab219; --crit-text: #f08080; --seq: #3987e5; --wash: #1a2331;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0c121b; --surface: #141c28; --ink: #eef2f8; --ink2: #b4bfd2; --muted: #8592a8;
+  --rule: #263142; --grid: #1d2735; --accent: #4cb5dc; --accent-ink: #06202d;
+  --good-text: #3fd04a; --warn-text: #fab219; --crit-text: #f08080; --seq: #3987e5; --wash: #1a2331;
+}
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--sans); font-size: 15px; line-height: 1.55; margin: 0; }
+.wrap { max-width: 1080px; margin-inline: auto; padding-inline: 20px; }
+a { color: var(--accent); }
+h1, h2, h3 { font-family: var(--sans); text-wrap: balance; line-height: 1.2; margin: 0; }
+h2 { font-size: 1.45rem; font-weight: 600; letter-spacing: -0.01em; }
+h3 { font-size: 1.02rem; font-weight: 600; }
+p { margin: 0; }
+.prose { font-family: var(--serif); font-size: 1.02rem; color: var(--ink2); max-width: 66ch; }
+.prose strong { color: var(--ink); font-weight: 600; }
+.mono { font-family: var(--mono); }
+.eyebrow { font-family: var(--mono); font-size: 0.72rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--muted); }
+
+/* header */
+.top { border-bottom: 1px solid var(--rule); background: var(--surface); }
+.top .wrap { padding-block: 34px 26px; display: grid; gap: 18px; }
+.top h1 { font-size: clamp(2rem, 5vw, 3.1rem); font-weight: 700; letter-spacing: -0.03em; }
+.lede { font-family: var(--serif); font-size: 1.14rem; color: var(--ink2); max-width: 62ch; }
+.lede em { color: var(--ink); font-style: italic; }
+.finding { display: flex; flex-wrap: wrap; gap: 8px 26px; align-items: baseline; padding-top: 6px; }
+.finding .big { font-size: clamp(2.2rem, 6vw, 3.4rem); font-weight: 700; letter-spacing: -0.03em; line-height: 1; }
+.finding .big small { font-size: 0.45em; font-weight: 500; color: var(--muted); letter-spacing: 0; }
+.finding .cap { color: var(--ink2); max-width: 30ch; font-size: 0.9rem; }
+.nav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--surface); border-bottom: 1px solid var(--rule); }
+.nav .wrap { display: flex; gap: 4px; overflow-x: auto; padding-block: 6px; scrollbar-width: none; }
+.nav a { white-space: nowrap; text-decoration: none; color: var(--ink2); font-size: 0.85rem; padding: 6px 10px; border-radius: 6px; }
+.nav a:hover, .nav a:focus-visible { background: var(--wash); color: var(--ink); outline: none; }
+.nav .theme { margin-left: auto; }
+button, select { font: inherit; color: inherit; }
+button.ghost { background: none; border: 1px solid var(--rule); border-radius: 6px; padding: 5px 10px; cursor: pointer; color: var(--ink2); font-size: 0.82rem; }
+button.ghost:hover { background: var(--wash); }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+section { padding-block: 44px 8px; scroll-margin-top: 56px; }
+.sec-head { display: grid; gap: 10px; margin-bottom: 20px; }
+.fig { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 16px 16px 12px; }
+.fig-title { font-weight: 600; font-size: 0.95rem; }
+.caption { color: var(--muted); font-size: 0.82rem; margin-top: 10px; max-width: 90ch; }
+.caption b { color: var(--ink2); font-weight: 600; }
+.row { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { border: 1px solid var(--rule); background: var(--surface); border-radius: 999px; padding: 3px 11px; font-size: 0.8rem; cursor: pointer; color: var(--ink2); }
+.chip[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: var(--accent-ink); }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 0.8rem; color: var(--ink2); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.split { display: grid; grid-template-columns: minmax(0, 1.55fr) minmax(0, 1fr); gap: 16px; align-items: start; }
+@media (max-width: 860px) { .split { grid-template-columns: minmax(0, 1fr); } }
+
+/* charts */
+.chart { position: relative; }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.chart text { font-family: var(--sans); fill: var(--muted); font-size: 11px; }
+.chart .ink text, .chart text.ink { fill: var(--ink2); }
+.chart .axis { stroke: var(--rule); }
+.chart .grid { stroke: var(--grid); }
+.chart .thr { stroke: var(--muted); stroke-dasharray: 4 4; }
+.chart .qlabel { font-size: 11px; font-weight: 600; letter-spacing: 0.04em; }
+.pt { cursor: pointer; }
+.pt .ring { fill: none; stroke: var(--ink); stroke-width: 2; opacity: 0; }
+.pt.sel .ring, .pt:hover .ring, .pt:focus-visible .ring { opacity: 1; }
+.pt:focus-visible { outline: none; }
+.tip { position: absolute; pointer-events: none; background: var(--ink); color: var(--bg); padding: 8px 10px; border-radius: 7px; font-size: 0.78rem; line-height: 1.4; max-width: 230px; z-index: 5; box-shadow: 0 6px 20px rgba(0,0,0,0.25); }
+.tip b { font-weight: 600; }
+.tip .m { font-family: var(--mono); font-size: 0.74rem; opacity: 0.9; }
+
+/* verdict pill (status: color + icon + label) */
+.pill { display: inline-flex; align-items: center; gap: 6px; font-size: 0.78rem; font-weight: 600; padding: 2px 9px 2px 7px; border-radius: 999px; border: 1px solid currentColor; white-space: nowrap; }
+.pill.apto { color: var(--good-text); } .pill.imita { color: var(--warn-text); } .pill.falla { color: var(--crit-text); }
+.pill svg { width: 11px; height: 11px; }
+
+/* tables */
+.tbl { overflow-x: auto; background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; }
+table { border-collapse: collapse; width: 100%; font-size: 0.86rem; }
+th, td { text-align: left; padding: 8px 12px; border-bottom: 1px solid var(--rule); white-space: nowrap; }
+th { font-weight: 600; font-size: 0.74rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--muted); background: var(--wash); position: sticky; top: 0; }
+th button { all: unset; cursor: pointer; }
+th button:hover, th button:focus-visible { color: var(--ink); }
+tr:last-child td { border-bottom: 0; }
+td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; font-family: var(--mono); font-size: 0.82rem; }
+tbody tr { cursor: pointer; }
+tbody tr:hover { background: var(--wash); }
+tbody tr.sel { background: color-mix(in oklab, var(--accent) 12%, var(--surface)); }
+.cat { font-size: 0.78rem; color: var(--ink2); }
+
+/* detail panel */
+.detail { background: var(--surface); border: 1px solid var(--rule); border-radius: 10px; padding: 16px; display: grid; gap: 12px; position: sticky; top: 64px; }
+.detail h3 { font-size: 1.05rem; overflow-wrap: anywhere; }
+.kv { display: grid; grid-template-columns: 1fr auto; gap: 4px 12px; font-size: 0.86rem; }
+.kv dt { color: var(--muted); } .kv dd { margin: 0; text-align: right; font-family: var(--mono); font-size: 0.82rem; }
+.tests { display: grid; gap: 4px; font-size: 0.82rem; }
+.tests .t { display: grid; grid-template-columns: 16px 1fr auto; gap: 8px; align-items: center; padding: 3px 0; border-bottom: 1px solid var(--grid); }
+.tests .t:last-child { border-bottom: 0; }
+.tests .ok { color: var(--good-text); font-weight: 700; } .tests .no { color: var(--crit-text); font-weight: 700; }
+.note { font-size: 0.82rem; color: var(--ink2); background: var(--wash); border-radius: 6px; padding: 8px 10px; }
+
+/* heatmap */
+.heat td, .heat th { padding: 6px 10px; }
+.heat td.c { text-align: center; font-family: var(--mono); font-size: 0.78rem; min-width: 74px; }
+.heat td.c.bad { outline: 2px solid var(--crit); outline-offset: -2px; font-weight: 600; }
+.heat td.c .x { color: var(--crit-text); }
+.heat td.name { font-family: var(--sans); font-size: 0.84rem; }
+
+/* calculator */
+.calc { display: grid; gap: 16px; }
+.calc .ctrls { display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; }
+.field { display: grid; gap: 4px; }
+.field label { font-size: 0.78rem; color: var(--muted); }
+select { background: var(--surface); border: 1px solid var(--rule); border-radius: 7px; padding: 7px 9px; width: 100%; }
+.meter { display: grid; gap: 8px; }
+.bar { height: 14px; background: var(--wash); border-radius: 4px; position: relative; overflow: hidden; }
+.bar > i { position: absolute; inset: 0 auto 0 0; border-radius: 4px; }
+.result { font-size: 1.05rem; }
+.result b { font-size: 1.7rem; letter-spacing: -0.02em; }
+.stack { display: grid; gap: 6px; }
+
+pre { margin: 0; overflow-x: auto; background: var(--wash); border: 1px solid var(--rule); border-radius: 8px; padding: 12px 14px; font-family: var(--mono); font-size: 0.8rem; line-height: 1.6; color: var(--ink); }
+.cols2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 16px; }
+footer { padding-block: 40px 60px; color: var(--muted); font-size: 0.82rem; }
+.limits { display: grid; gap: 8px; padding-left: 18px; margin: 0; color: var(--ink2); font-family: var(--serif); font-size: 0.98rem; max-width: 70ch; }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; scroll-behavior: auto !important; } }
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <div class="eyebrow">Informe técnico · Fuentes de entropía para custodia multisig</div>
+    <h1>Entropy Arena</h1>
+    <p class="lede">Dieciséis generadores de aleatoriedad, dos medidas independientes y una conclusión incómoda:
+      <em>pasar los tests estadísticos no significa tener entropía.</em> Un generador determinista, por caótico que sea,
+      solo hereda la incertidumbre de su semilla.</p>
+    <div class="finding" id="finding" aria-live="polite"></div>
+  </div>
+</header>
+
+<nav class="nav" aria-label="Secciones">
+  <div class="wrap">
+    <a href="#tesis">Tesis</a><a href="#arena">Arena</a><a href="#bateria">Batería NIST</a>
+    <a href="#estimadores">Estimadores</a><a href="#estructura">Estructura</a><a href="#ataques">Ataques</a>
+    <a href="#wallet">Multisig</a><a href="#reproducir">Reproducir</a>
+    <button class="ghost theme" id="themeBtn" type="button" aria-label="Cambiar tema claro u oscuro">Tema</button>
+  </div>
+</nav>
+
+<main class="wrap">
+
+<section id="tesis">
+  <div class="sec-head">
+    <div class="eyebrow">Planteamiento</div>
+    <h2>Dos preguntas que los tests por sí solos confunden</h2>
+  </div>
+  <div class="cols2">
+    <div class="stack">
+      <h3>Calidad estadística (0–100)</h3>
+      <p class="prose">¿Se <strong>parece</strong> a una secuencia aleatoria? Siete pruebas NIST SP 800-22 con el criterio del estándar
+        (proporción de muestras que pasan más uniformidad de los p-values) y la min-entropy MCV normalizada. Mide apariencia.</p>
+    </div>
+    <div class="stack">
+      <h3>Bits reales por muestra</h3>
+      <p class="prose">¿Cuánta <strong>incertidumbre genuina</strong> tiene para un atacante? Es la semilla, la entrada física o el mínimo de diez
+        estimadores NIST SP 800-90B. Una clave necesita al menos <strong>128 bits</strong>.</p>
+    </div>
+  </div>
+  <p class="prose" style="margin-top:16px">Un método es <strong>APTO</strong> si supera ambas exigencias (calidad ≥ 85 y ≥ 128 bits). Si solo supera la primera,
+    <strong>imita el azar</strong>; si no supera ni los tests, <strong>falla</strong>. La figura 1 sitúa cada generador en ese plano.</p>
+</section>
+
+<section id="arena">
+  <div class="sec-head">
+    <div class="eyebrow">Resultado principal</div>
+    <h2>Figura 1 · Calidad frente a entropía real</h2>
+  </div>
+  <div class="split">
+    <div class="fig">
+      <div class="row" style="justify-content:space-between; margin-bottom:8px">
+        <div class="chips" id="catChips" role="group" aria-label="Filtrar por categoría"></div>
+      </div>
+      <div class="chart" id="scatter"></div>
+      <div class="legend" id="legend" style="margin-top:8px"></div>
+      <p class="caption"><b>Figura 1.</b> Cada punto es un método (100 muestras de 100 kbit). Eje X en escala logarítmica (bits reales por muestra;
+        los CSPRNG llegan al tope de la muestra, 10⁵). Las líneas discontinuas marcan los umbrales del veredicto: 128 bits y calidad 85.
+        Todos los que están arriba a la izquierda pasan la batería y aun así se pueden predecir. Selecciona un punto o una fila para ver el detalle.</p>
+    </div>
+    <aside class="detail" id="detail" aria-live="polite"></aside>
+  </div>
+
+  <div style="margin-top:18px" class="tbl">
+    <table id="board">
+      <thead><tr>
+        <th><button data-k="rank" type="button">#</button></th>
+        <th><button data-k="name" type="button">Método</button></th>
+        <th><button data-k="category" type="button">Categoría</button></th>
+        <th class="num"><button data-k="score" type="button">Calidad</button></th>
+        <th class="num"><button data-k="bits" type="button">Bits reales</button></th>
+        <th class="num"><button data-k="minent" type="button">Min-ent. (bits/byte)</button></th>
+        <th class="num"><button data-k="okc" type="button">Tests OK</button></th>
+        <th><button data-k="vrank" type="button">Veredicto</button></th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+  </div>
+  <p class="caption"><b>Tabla 1.</b> Clasificación completa. La calidad y el veredicto se calculan sobre 100 muestras independientes por método.
+    Los valores de 10⁵ bits en CSPRNG son el tope de la muestra, no una medición.</p>
+</section>
+
+<section id="bateria">
+  <div class="sec-head">
+    <div class="eyebrow">Detalle de las pruebas</div>
+    <h2>Figura 2 · Proporción de muestras que superan cada test NIST</h2>
+  </div>
+  <div class="tbl"><table class="heat" id="heat"></table></div>
+  <p class="caption"><b>Figura 2.</b> Proporción de las 100 muestras con p ≥ 0.01. El intervalo aceptable del estándar es 0.99 ± 3σ (≈ 0.96 con 100 muestras);
+    las celdas con borde rojo y × no cumplen el criterio de proporción o de uniformidad. Un solo test fallado por azar es esperable
+    (≈ 1–2 % en una fuente ideal) y por eso el veredicto tolera uno (calidad ≥ 85).</p>
+</section>
+
+<section id="estimadores">
+  <div class="sec-head">
+    <div class="eyebrow">Validación del instrumento</div>
+    <h2>Figura 3 · El mínimo de diez estimadores no sobreestima la entropía</h2>
+    <p class="prose">Antes de confiar en los estimadores SP 800-90B, se probaron con fuentes cuya min-entropy real se conoce.
+      El estimador MCV por sí solo es ciego a la memoria y la periodicidad; el mínimo de los diez las detecta.</p>
+  </div>
+  <div class="fig">
+    <div class="chart" id="est"></div>
+    <div class="legend" style="margin-top:8px">
+      <span><svg width="14" height="14" aria-hidden="true"><line x1="7" y1="1" x2="7" y2="13" stroke="currentColor" stroke-width="2.5"/></svg> Valor verdadero</span>
+      <span><svg width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="none" stroke="currentColor" stroke-width="2"/></svg> MCV (un estimador)</span>
+      <span><svg width="14" height="14" aria-hidden="true"><circle cx="7" cy="7" r="5" fill="var(--seq)"/></svg> Mínimo de 10 estimadores</span>
+    </div>
+    <p class="caption"><b>Figura 3.</b> Bits de min-entropy por bit. En la fuente con memoria, MCV estima 0.985 frente a un valor verdadero de 0.322 (sobreestima 3×);
+      el mínimo de los diez (0.168) queda por debajo. En ninguna fuente el mínimo supera el valor verdadero.</p>
+  </div>
+</section>
+
+<section id="estructura">
+  <div class="sec-head">
+    <div class="eyebrow">Pruebas de estructura</div>
+    <h2>Figura 4 · Lo que la batería estándar no ve</h2>
+    <p class="prose">El Mersenne Twister supera toda la batería NIST. Pero el flujo de <strong>un mismo bit</strong> de palabras consecutivas de 32 bits
+      tiene complejidad lineal 19 937, muy inferior a la esperada (≈ n/2). Es el único test genérico que lo distingue de un CSPRNG.</p>
+  </div>
+  <div class="tbl"><table class="heat" id="struct"></table></div>
+  <p class="caption"><b>Figura 4.</b> Proporción de 10 muestras que pasan. La columna «Complejidad lineal por bit» aplica Berlekamp–Massey a 45 000 bits de un
+    mismo bit de palabra. «–» = no evaluado por coste computacional.</p>
+</section>
+
+<section id="ataques">
+  <div class="sec-head">
+    <div class="eyebrow">Evidencia experimental</div>
+    <h2>Figura 5 · Lo que «parece aleatorio» se rompe en segundos</h2>
+  </div>
+  <div class="fig">
+    <div class="chart" id="atk"></div>
+    <p class="caption"><b>Figura 5.</b> Tiempo de cada ataque sobre los propios métodos de la arena (escala logarítmica). Observado = bytes de salida que ve el atacante
+      (para el ataque de reloj, tamaño del espacio de búsqueda). Control: el mismo ataque contra <span class="mono">secrets</span> falla.</p>
+  </div>
+</section>
+
+<section id="wallet">
+  <div class="sec-head">
+    <div class="eyebrow">De la arena a la custodia</div>
+    <h2>Seguridad de un multisig 2-de-3 según la fuente de cada clave</h2>
+    <p class="prose">Para gastar hay que recuperar <em>t</em> claves; el atacante elige las más débiles. La seguridad efectiva es
+      <span class="mono">min(h₍ₜ₎, 128)</span>, donde h₍ₜ₎ es la <em>t</em>-ésima menor entropía real (Proposición 7.1 de la metodología).
+      No es la de la mejor fuente. Elige la fuente de cada firmante.</p>
+  </div>
+  <div class="fig calc" id="calc"></div>
+</section>
+
+<section id="reproducir">
+  <div class="sec-head">
+    <div class="eyebrow">Reproducibilidad</div>
+    <h2>Todo sale del código del repositorio</h2>
+  </div>
+  <div class="cols2">
+<pre>python experiments/run_arena.py
+python experiments/validate_estimators.py
+python experiments/run_structure_tests.py
+python experiments/run_attacks.py
+python experiments/build_site.py</pre>
+<pre>docs/methodology.pdf   metodología completa
+results/               salidas de cada experimento
+site/index.html        este portal</pre>
+  </div>
+  <div class="sec-head" style="margin-top:28px"><h3>Limitaciones</h3></div>
+  <ul class="limits">
+    <li>Los estimadores SP 800-90B están adaptados, no certificados, y usan 100 kbit (el estándar pide 1 Mbit): las cotas son conservadoras.</li>
+    <li>El veredicto mide <em>entropía</em>, no resistencia criptográfica: PCG64 es «APTO» por su semilla de 128 bits, pero su estado se recupera a partir de la salida.</li>
+    <li>Una sesión manual de dados o monedas es una sola muestra; el test de uniformidad no aplica. Un humano no lanza ni baraja de forma uniforme.</li>
+    <li>La aritmética de curva elíptica del prototipo es educativa; solo se usó en regtest, nunca con fondos reales.</li>
+  </ul>
+</section>
+
+</main>
+<footer><div class="wrap">Entropy Arena · resultados generados por <span class="mono">experiments/build_site.py</span> a partir de <span class="mono">results/</span>.</div></footer>
+
+<script>
+const D = /*__DATA__*/null;
+const $ = (s, r = document) => r.querySelector(s);
+const NS = "http://www.w3.org/2000/svg";
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+/* ---------- datos ---------- */
+const CAT = { computational: "Computacional", mathematical: "Matemático", physical: "Físico", hybrid: "Híbrido", "physical-manual": "Manual" };
+const PRETTY = {
+  "secrets.token_bytes": "secrets (CSPRNG)", "os.urandom": "os.urandom", "uuid.uuid4": "UUID v4",
+  "numpy_pcg64": "NumPy PCG64", "randu_lcg": "RANDU (LCG)", "brownian_motion": "Movimiento browniano",
+  "logistic_map": "Mapa logístico", "lorenz_attractor": "Atractor de Lorenz", "rule30_cellular_automaton": "Regla 30",
+  "pi_binary_digits": "Dígitos binarios de π", "cpu_timing_jitter_raw": "Jitter de CPU (crudo)",
+  "cpu_timing_jitter_sha256": "Jitter de CPU + SHA-256"
+};
+let mtCount = 0;
+const VERD = {
+  apto: { label: "APTO", color: "var(--good)" },
+  imita: { label: "IMITA AZAR", color: "var(--warn)" },
+  falla: { label: "FALLA TESTS", color: "var(--crit)" }
+};
+const VRANK = { apto: 0, imita: 1, falla: 2 };
+const rows = D.leaderboard.map(r => {
+  const vk = r.verdict.startsWith("APTO") ? "apto" : r.verdict.startsWith("IMITA") ? "imita" : "falla";
+  let name = PRETTY[r.method];
+  if (!name) {
+    if (r.method.startsWith("random.getrandbits")) name = "Mersenne Twister #" + (++mtCount);
+    else if (r.method.startsWith("xor(")) name = "XOR (" + r.method.slice(4, -1).replace(/random\.getrandbits/, "MT").replace(/os\.urandom/, "urandom")
+      .replace(/brownian_motion/, "browniano").replace(/cpu_timing_jitter_sha256/, "jitter").split("+").join(" + ") + ")";
+    else name = r.method;
+  }
+  const tests = Object.entries(r.tests || {});
+  return { ...r, name, vk, bits: r.real_bits, score: r.score, minent: r.metrics.min_entropy, tests,
+    okc: tests.filter(([, t]) => t.ok).length, ntests: tests.length, cat: CAT[r.category] || r.category, category: CAT[r.category] || r.category };
+});
+rows.sort((a, b) => b.score - a.score);
+rows.forEach((r, i) => r.rank = i + 1);
+rows.forEach(r => r.vrank = VRANK[r.vk] * 1000 - r.bits);
+const TEST_NAMES = { monobit: "Monobit", runs: "Rachas", block_frequency: "Frecuencia por bloques", cumulative_sums_fwd: "Sumas acumuladas →",
+  cumulative_sums_bwd: "Sumas acumuladas ←", longest_run_ones: "Racha más larga", chi2_bytes: "χ² de bytes" };
+const fmtBits = b => b >= 1e5 ? "10⁵ (tope)" : b >= 1000 ? (b / 1000).toFixed(1) + " k" : b.toFixed(b % 1 ? 1 : 0);
+const fmtBitsShort = b => b >= 1e5 ? "10⁵ (tope)" : b >= 1000 ? (b / 1000).toFixed(1).replace(".0", "") + " k" : (b % 1 ? b.toFixed(1) : String(b));
+
+/* ---------- cabecera: hallazgo ---------- */
+(() => {
+  const pass = rows.filter(r => r.score >= 85).length, apto = rows.filter(r => r.vk === "apto").length, imita = rows.filter(r => r.vk === "imita").length;
+  $("#finding").innerHTML =
+    `<div class="big">${pass}<small> de ${rows.length}</small></div><div class="cap">métodos pasan la batería estadística (calidad ≥ 85)</div>` +
+    `<div class="big">${apto}<small> de ${pass}</small></div><div class="cap">tienen además ≥ 128 bits de entropía real. Los otros ${imita} imitan el azar.</div>`;
+})();
+
+/* ---------- tema ---------- */
+(() => {
+  const btn = $("#themeBtn"), root = document.documentElement;
+  try { const t = localStorage.getItem("ea-theme"); if (t) root.dataset.theme = t; } catch (e) {}
+  btn.addEventListener("click", () => {
+    const dark = root.dataset.theme ? root.dataset.theme === "dark" : matchMedia("(prefers-color-scheme: dark)").matches;
+    root.dataset.theme = dark ? "light" : "dark";
+    try { localStorage.setItem("ea-theme", root.dataset.theme); } catch (e) {}
+  });
+})();
+
+/* ---------- utilidades SVG ---------- */
+function el(name, attrs = {}, parent) {
+  const n = document.createElementNS(NS, name);
+  for (const k in attrs) n.setAttribute(k, attrs[k]);
+  if (parent) parent.appendChild(n);
+  return n;
+}
+function symbol(vk, cx, cy, r, parent) {
+  const c = VERD[vk].color;
+  if (vk === "apto") return el("circle", { cx, cy, r, fill: c, stroke: "var(--surface)", "stroke-width": 2 }, parent);
+  if (vk === "imita") return el("path", { d: `M${cx},${cy - r - 1.5} L${cx + r + 1.5},${cy} L${cx},${cy + r + 1.5} L${cx - r - 1.5},${cy} Z`, fill: c, stroke: "var(--surface)", "stroke-width": 2 }, parent);
+  return el("rect", { x: cx - r, y: cy - r, width: 2 * r, height: 2 * r, rx: 1.5, fill: c, stroke: "var(--surface)", "stroke-width": 2 }, parent);
+}
+function iconSvg(vk) {
+  const c = "currentColor";
+  if (vk === "apto") return `<svg viewBox="0 0 12 12" aria-hidden="true"><circle cx="6" cy="6" r="5" fill="${c}"/></svg>`;
+  if (vk === "imita") return `<svg viewBox="0 0 12 12" aria-hidden="true"><path d="M6 0.5 L11.5 6 L6 11.5 L0.5 6Z" fill="${c}"/></svg>`;
+  return `<svg viewBox="0 0 12 12" aria-hidden="true"><rect x="1" y="1" width="10" height="10" rx="1.5" fill="${c}"/></svg>`;
+}
+const pill = vk => `<span class="pill ${vk}">${iconSvg(vk)}${VERD[vk].label}</span>`;
+
+/* ---------- estado compartido ---------- */
+const state = { cats: new Set(Object.values(CAT)), sel: null, sortK: "rank", sortDir: 1 };
+const presentCats = [...new Set(rows.map(r => r.category))];
+state.cats = new Set(presentCats);
+
+/* ---------- filtros + leyenda ---------- */
+(() => {
+  const box = $("#catChips");
+  presentCats.forEach(c => {
+    const b = document.createElement("button");
+    b.type = "button"; b.className = "chip"; b.textContent = c; b.setAttribute("aria-pressed", "true");
+    b.addEventListener("click", () => {
+      if (state.cats.has(c)) state.cats.delete(c); else state.cats.add(c);
+      if (!state.cats.size) presentCats.forEach(x => state.cats.add(x));
+      box.querySelectorAll(".chip").forEach(x => x.setAttribute("aria-pressed", state.cats.has(x.textContent)));
+      drawScatter(); drawTable();
+    });
+    box.appendChild(b);
+  });
+  $("#legend").innerHTML = ["apto", "imita", "falla"].map(v =>
+    `<span style="color:${VERD[v].color}">${iconSvg(v)}</span><span style="margin-left:-8px;color:var(--ink2)">${VERD[v].label}</span>`).join("");
+  $("#legend").innerHTML = ["apto", "imita", "falla"].map(v =>
+    `<span><span style="color:${VERD[v].color};display:inline-flex;width:12px">${iconSvg(v)}</span>${VERD[v].label}${v === "apto" ? " (calidad ≥ 85 y ≥ 128 bits)" : v === "imita" ? " (pasa los tests, < 128 bits)" : " (calidad < 85)"}</span>`).join("");
+})();
+
+/* ---------- Figura 1: dispersión ---------- */
+const tipEl = document.createElement("div");
+tipEl.className = "tip"; tipEl.hidden = true;
+$("#scatter").appendChild(tipEl);
+function showTip(html, x, y, w) {
+  tipEl.innerHTML = html; tipEl.hidden = false;
+  const tw = tipEl.offsetWidth;
+  tipEl.style.left = Math.max(4, Math.min(w - tw - 4, x + 12)) + "px";
+  tipEl.style.top = Math.max(0, y - tipEl.offsetHeight - 10) + "px";
+}
+function drawScatter() {
+  const host = $("#scatter");
+  host.querySelectorAll("svg").forEach(s => s.remove());
+  const W = Math.max(300, host.clientWidth || 640), H = W < 520 ? 340 : 430;
+  const m = { l: 44, r: 14, t: 14, b: 46 }, pw = W - m.l - m.r, ph = H - m.t - m.b;
+  const X = b => m.l + (Math.log10(b + 1) / 5) * pw, Y = q => m.t + (1 - q / 112) * ph;
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "Dispersión de calidad estadística frente a bits reales por método" }, host);
+  // cuadrantes (fondo sutil de la zona APTO)
+  el("rect", { x: X(128), y: Y(112), width: X(1e5) - X(128), height: Y(85) - Y(112), fill: "var(--good)", opacity: 0.07 }, svg);
+  [0, 25, 50, 75, 100].forEach(q => {
+    el("line", { x1: m.l, x2: m.l + pw, y1: Y(q), y2: Y(q), class: "grid" }, svg);
+    const t = el("text", { x: m.l - 8, y: Y(q) + 4, "text-anchor": "end" }, svg); t.textContent = q;
+  });
+  [[0, "0"], [10, "10"], [100, "100"], [1000, "1 k"], [1e4, "10 k"], [1e5, "100 k"]].forEach(([b, lb]) => {
+    el("line", { x1: X(b), x2: X(b), y1: m.t, y2: m.t + ph, class: "grid" }, svg);
+    const t = el("text", { x: X(b), y: m.t + ph + 16, "text-anchor": "middle" }, svg); t.textContent = lb;
+  });
+  el("line", { x1: m.l, x2: m.l + pw, y1: m.t + ph, y2: m.t + ph, class: "axis" }, svg);
+  el("line", { x1: X(128), x2: X(128), y1: m.t, y2: m.t + ph, class: "thr" }, svg);
+  el("line", { x1: m.l, x2: m.l + pw, y1: Y(85), y2: Y(85), class: "thr" }, svg);
+  let t = el("text", { x: m.l + pw / 2, y: H - 6, "text-anchor": "middle", class: "ink" }, svg); t.textContent = "Bits reales por muestra (escala logarítmica)";
+  t = el("text", { transform: `translate(11 ${m.t + ph / 2}) rotate(-90)`, "text-anchor": "middle", class: "ink" }, svg); t.textContent = "Calidad estadística (0–100)";
+  t = el("text", { x: X(128) - 6, y: Y(108), "text-anchor": "end", class: "qlabel", style: "fill:var(--warn-text)" }, svg); t.textContent = "IMITA AZAR";
+  t = el("text", { x: X(128) + 6, y: Y(108), class: "qlabel", style: "fill:var(--good-text)" }, svg); t.textContent = "APTO";
+  t = el("text", { x: m.l + 6, y: Y(85) + 30, class: "qlabel", style: "fill:var(--crit-text)" }, svg); t.textContent = "FALLA TESTS";
+  // agrupar puntos casi coincidentes
+  const vis = rows.filter(r => state.cats.has(r.category));
+  const groups = [];
+  vis.forEach(r => {
+    const px = X(r.bits), py = Y(r.score);
+    const g = groups.find(g => Math.abs(g.px - px) < 11 && Math.abs(g.py - py) < 11 && g.vk === r.vk);
+    if (g) { g.items.push(r); g.px = (g.px * (g.items.length - 1) + px) / g.items.length; g.py = (g.py * (g.items.length - 1) + py) / g.items.length; }
+    else groups.push({ px, py, vk: r.vk, items: [r] });
+  });
+  groups.forEach(g => {
+    const gEl = el("g", { class: "pt" + (g.items.some(i => i === state.sel) ? " sel" : ""), tabindex: 0, role: "button",
+      "aria-label": g.items.map(i => `${i.name}: calidad ${i.score.toFixed(1)}, ${fmtBitsShort(i.bits)} bits, ${VERD[i.vk].label}`).join("; ") }, svg);
+    el("circle", { class: "ring", cx: g.px, cy: g.py, r: 12 }, gEl);
+    el("circle", { cx: g.px, cy: g.py, r: 15, fill: "transparent" }, gEl);         // zona de impacto amplia
+    symbol(g.vk, g.px, g.py, 6, gEl);
+    if (g.items.length > 1) {
+      const tt = el("text", { x: g.px + 10, y: g.py - 8, class: "ink", style: "font-weight:600;font-size:11px" }, gEl); tt.textContent = "×" + g.items.length;
+    }
+    const html = g.items.map(i => `<b>${esc(i.name)}</b><br><span class="m">calidad ${i.score.toFixed(1)} · ${fmtBitsShort(i.bits)} bits · ${VERD[i.vk].label}</span>`).join("<br>");
+    const enter = () => showTip(html, g.px, g.py, W);
+    gEl.addEventListener("mouseenter", enter); gEl.addEventListener("focus", enter);
+    gEl.addEventListener("mouseleave", () => tipEl.hidden = true); gEl.addEventListener("blur", () => tipEl.hidden = true);
+    const pick = () => { const cur = g.items.indexOf(state.sel); select(g.items[(cur + 1) % g.items.length]); };
+    gEl.addEventListener("click", pick);
+    gEl.addEventListener("keydown", e => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(); } });
+  });
+  // etiquetas directas en los puntos aislados más informativos
+  groups.filter(g => g.items.length === 1).forEach(g => {
+    const r = g.items[0];
+    if (!["secrets (CSPRNG)", "os.urandom", "NumPy PCG64", "Atractor de Lorenz", "UUID v4", "Jitter de CPU (crudo)", "Jitter de CPU + SHA-256"].includes(r.name)) return;
+    const right = g.px < m.l + pw * 0.62;
+    const lt = el("text", { x: g.px + (right ? 11 : -11), y: g.py + 4, "text-anchor": right ? "start" : "end", class: "ink", style: "font-size:11px;pointer-events:none" }, svg);
+    lt.textContent = r.name;
+  });
+}
+
+/* ---------- panel de detalle ---------- */
+function drawDetail() {
+  const r = state.sel, box = $("#detail");
+  if (!r) { box.innerHTML = `<div class="eyebrow">Detalle</div><p class="prose" style="font-size:.92rem">Selecciona un punto de la figura 1 o una fila de la tabla para ver sus pruebas.</p>`; return; }
+  box.innerHTML = `
+    <div class="eyebrow">${esc(r.category)}${r.deterministic ? " · determinista" : ""}</div>
+    <h3>${esc(r.name)}</h3>
+    <div>${pill(r.vk)}</div>
+    <dl class="kv">
+      <dt>Calidad estadística</dt><dd>${r.score.toFixed(1)}</dd>
+      <dt>Bits reales / muestra</dt><dd>${fmtBits(r.bits)}</dd>
+      <dt>Min-entropy MCV</dt><dd>${r.minent.toFixed(2)} bits/byte</dd>
+      <dt>Compresibilidad (zlib)</dt><dd>${r.metrics.compress.toFixed(3)}</dd>
+      <dt>Autocorrelación (lag 1)</dt><dd>${r.metrics.autocorr.toFixed(4)}</dd>
+    </dl>
+    <div class="tests" role="list" aria-label="Pruebas NIST">
+      ${r.tests.map(([k, t]) => `<div class="t" role="listitem"><span class="${t.ok ? "ok" : "no"}" aria-hidden="true">${t.ok ? "✓" : "✗"}</span>
+        <span>${TEST_NAMES[k] || k}<span class="sr" style="position:absolute;left:-9999px">${t.ok ? " superada" : " no superada"}</span></span>
+        <span class="mono" style="font-size:.78rem;color:var(--ink2)">${(t.pass_rate * 100).toFixed(0)} %${t.uniformity_p != null ? " · u=" + (t.uniformity_p >= 0.01 ? t.uniformity_p.toFixed(2) : t.uniformity_p.toExponential(0)) : ""}</span></div>`).join("")}
+    </div>
+    <div class="note">${explain(r)}</div>`;
+}
+function explain(r) {
+  const n = r.name;
+  if (r.vk === "apto" && r.bits >= 1e5) return "Fuente impredecible: cada muestra es entropía fresca del sistema operativo.";
+  if (r.vk === "apto" && n === "NumPy PCG64") return "Cumple el umbral por su semilla de 128 bits. Ojo: su estado interno se puede recuperar a partir de la salida; no es criptográfico.";
+  if (r.vk === "apto") return "Aporta entropía física y, condicionada con SHA-256 o combinada por XOR con otra fuente, supera los 128 bits.";
+  if (r.vk === "imita" && n.startsWith("Mersenne")) return "Pasa toda la batería, pero con 624 salidas (2 496 bytes) se reconstruye su estado y se predice todo lo siguiente.";
+  if (r.vk === "imita" && n.startsWith("RANDU")) return "Estado de 31 bits: con 8 bytes se recupera la semilla completa.";
+  if (r.vk === "imita" && n.includes("π")) return "Constante pública: la única «semilla» es el desplazamiento (≈ 23 bits), que se encuentra buscando la salida en π.";
+  if (r.vk === "imita") return "Determinista: su imprevisibilidad viene de una semilla de 64 bits, por debajo del umbral de 128.";
+  if (n.startsWith("UUID")) return "Los bits de versión y variante están fijos: solo 122 de cada 128 bits son aleatorios y los tests lo delatan.";
+  if (n.includes("crudo")) return "Sesgo y correlación de la temporización: falla la batería. Condicionado con SHA-256 sí pasa.";
+  if (n.includes("Lorenz")) return "Integración de Euler con paso grande: introduce sesgo y falla la mayoría de las pruebas.";
+  return "No supera la batería estadística.";
+}
+function select(r) { state.sel = r; drawScatter(); drawTable(); drawDetail(); }
+
+/* ---------- Tabla ---------- */
+function drawTable() {
+  const tb = $("#board tbody");
+  const list = rows.filter(r => state.cats.has(r.category)).slice().sort((a, b) => {
+    const k = state.sortK, va = a[k], vb = b[k];
+    return (typeof va === "string" ? va.localeCompare(vb) : va - vb) * state.sortDir;
+  });
+  tb.innerHTML = list.map(r => `<tr data-i="${rows.indexOf(r)}" class="${r === state.sel ? "sel" : ""}" tabindex="0">
+    <td class="num">${r.rank}</td><td>${esc(r.name)}</td><td class="cat">${esc(r.category)}</td>
+    <td class="num">${r.score.toFixed(1)}</td><td class="num">${fmtBitsShort(r.bits)}</td><td class="num">${r.minent.toFixed(2)}</td>
+    <td class="num">${r.okc}/${r.ntests}</td><td>${pill(r.vk)}</td></tr>`).join("");
+  tb.querySelectorAll("tr").forEach(tr => {
+    const go = () => select(rows[+tr.dataset.i]);
+    tr.addEventListener("click", go); tr.addEventListener("keydown", e => { if (e.key === "Enter") go(); });
+  });
+}
+document.querySelectorAll("#board th button").forEach(b => b.addEventListener("click", () => {
+  const k = b.dataset.k; state.sortDir = state.sortK === k ? -state.sortDir : (k === "name" || k === "category" || k === "rank" || k === "vrank" ? 1 : -1);
+  state.sortK = k; drawTable();
+}));
+
+/* ---------- Figura 2: mapa de calor ---------- */
+function heatCell(rate, ok) {
+  if (rate == null) return `<td class="c" style="color:var(--muted)">–</td>`;
+  const v = Math.max(0, Math.min(1, (rate - 0.85) / 0.15));
+  const bg = `color-mix(in oklab, var(--seq) ${Math.round(v * 62)}%, var(--surface))`;
+  const fg = v > 0.62 ? "#fff" : "var(--ink)";
+  return `<td class="c ${ok === false ? "bad" : ""}" style="background:${bg};color:${fg}">${(rate * 100).toFixed(0)}${ok === false ? ' <span class="x" aria-label="no supera el criterio">×</span>' : ""}</td>`;
+}
+(() => {
+  const ks = Object.keys(TEST_NAMES);
+  $("#heat").innerHTML = `<thead><tr><th>Método</th>${ks.map(k => `<th style="text-align:center">${TEST_NAMES[k]}</th>`).join("")}</tr></thead><tbody>` +
+    rows.map(r => `<tr><td class="name">${esc(r.name)}</td>${ks.map(k => { const t = r.tests.find(x => x[0] === k); return heatCell(t ? t[1].pass_rate : null, t ? t[1].ok : null); }).join("")}</tr>`).join("") + "</tbody>";
+  const S = D.structure, cols = S.columns;
+  const CN = { binary_matrix_rank: "Rango binario", dft_spectral: "Espectral (DFT)", approx_entropy: "Entropía aproximada", linear_complexity: "Complejidad lineal", linear_complexity_s32: "Complejidad lineal por bit" };
+  $("#struct").innerHTML = `<thead><tr><th>Método</th>${cols.map(c => `<th style="text-align:center">${CN[c]}</th>`).join("")}</tr></thead><tbody>` +
+    S.rows.map(r => `<tr><td class="name">${esc(PRETTY[r.method] || (r.method.startsWith("random.") ? "Mersenne Twister" : r.method))}</td>${cols.map(c => {
+      const v = r.rates[c]; if (v == null) return heatCell(null);
+      const bad = v < 0.7;
+      return `<td class="c ${bad ? "bad" : ""}" style="background:color-mix(in oklab, var(--seq) ${Math.round(Math.max(0, (v - 0.85) / 0.15) * 62)}%, var(--surface));color:${v > 0.95 ? "#fff" : "var(--ink)"}">${(v * 100).toFixed(0)}${bad ? ' <span class="x">×</span>' : ""}</td>`;
+    }).join("")}</tr>`).join("") + "</tbody>";
+})();
+
+/* ---------- Figura 3: estimadores (dumbbell) ---------- */
+function drawEst() {
+  const host = $("#est"); host.innerHTML = "";
+  const data = D.estimators, W = Math.max(300, host.clientWidth || 640), rowH = 44;
+  const m = { l: W < 520 ? 120 : 170, r: 20, t: 8, b: 32 }, H = m.t + rowH * data.length + m.b, pw = W - m.l - m.r;
+  const X = v => m.l + v * pw;
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "Min-entropy verdadera frente a estimada" }, host);
+  [0, 0.25, 0.5, 0.75, 1].forEach(v => {
+    el("line", { x1: X(v), x2: X(v), y1: m.t, y2: m.t + rowH * data.length, class: "grid" }, svg);
+    const t = el("text", { x: X(v), y: H - 12, "text-anchor": "middle" }, svg); t.textContent = v.toFixed(2);
+  });
+  const t0 = el("text", { x: m.l + pw / 2, y: H - 0, "text-anchor": "middle", class: "ink" }, svg); t0.textContent = "bits de min-entropy por bit";
+  data.forEach((d, i) => {
+    const y = m.t + rowH * i + rowH / 2;
+    const lt = el("text", { x: m.l - 12, y: y + 4, "text-anchor": "end", class: "ink" }, svg); lt.textContent = d.source;
+    el("line", { x1: X(d.min10), x2: X(d.mcv), y1: y, y2: y, stroke: "var(--rule)", "stroke-width": 3, "stroke-linecap": "round" }, svg);
+    el("line", { x1: X(d.true), x2: X(d.true), y1: y - 13, y2: y + 13, stroke: "var(--ink)", "stroke-width": 2.5 }, svg);
+    el("circle", { cx: X(d.mcv), cy: y, r: 6, fill: "var(--surface)", stroke: "var(--ink2)", "stroke-width": 2 }, svg);
+    el("circle", { cx: X(d.min10), cy: y, r: 6, fill: "var(--seq)", stroke: "var(--surface)", "stroke-width": 2 }, svg);
+    const vt = el("text", { x: X(d.min10) - 10, y: y - 10, "text-anchor": "end", style: "font-size:10.5px;font-family:var(--mono)" }, svg);
+    vt.textContent = d.min10.toFixed(2);
+    const g = el("g", {}, svg);
+    const hit = el("rect", { x: 0, y: y - rowH / 2, width: W, height: rowH, fill: "transparent" }, g);
+    hit.addEventListener("mouseenter", () => showEst(`<b>${esc(d.source)}</b><br><span class="m">verdadero ${d.true.toFixed(3)}<br>MCV ${d.mcv.toFixed(3)}<br>mínimo de 10 ${d.min10.toFixed(3)} (manda: ${esc(d.driver)})</span>`, W / 2, y, W));
+    hit.addEventListener("mouseleave", () => estTip.hidden = true);
+  });
+  host.appendChild(estTip);
+}
+const estTip = document.createElement("div"); estTip.className = "tip"; estTip.hidden = true;
+function showEst(html, x, y, w) { estTip.innerHTML = html; estTip.hidden = false; estTip.style.left = Math.min(w - estTip.offsetWidth - 4, x) + "px"; estTip.style.top = Math.max(0, y - estTip.offsetHeight - 14) + "px"; }
+
+/* ---------- Figura 5: ataques (barras logarítmicas) ---------- */
+function drawAtk() {
+  const host = $("#atk"); host.innerHTML = "";
+  const data = D.attacks, W = Math.max(300, host.clientWidth || 640), rowH = 46;
+  const m = { l: W < 520 ? 130 : 200, r: 70, t: 8, b: 34 }, H = m.t + rowH * data.length + m.b, pw = W - m.l - m.r;
+  const lo = -2, hi = 0.5;  // 0.01 s .. ~3 s
+  const X = s => m.l + ((Math.log10(Math.max(s, 0.01)) - lo) / (hi - lo)) * pw;
+  const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": "Tiempo de cada ataque" }, host);
+  [[0.01, "0.01 s"], [0.1, "0.1 s"], [1, "1 s"]].forEach(([v, lb]) => {
+    el("line", { x1: X(v), x2: X(v), y1: m.t, y2: m.t + rowH * data.length, class: "grid" }, svg);
+    const t = el("text", { x: X(v), y: H - 16, "text-anchor": "middle" }, svg); t.textContent = lb;
+  });
+  el("line", { x1: m.l, x2: m.l, y1: m.t, y2: m.t + rowH * data.length, class: "axis" }, svg);
+  data.forEach((d, i) => {
+    const y = m.t + rowH * i + 8, name = { "MT19937 state recovery": "Mersenne Twister", "RANDU state recovery": "RANDU", "pi offset search": "Dígitos de π", "time-seeded PRNG brute force": "Semilla = reloj" }[d.attack] || d.attack;
+    const lt = el("text", { x: m.l - 12, y: y + 10, "text-anchor": "end", class: "ink" }, svg); lt.textContent = name;
+    const l2 = el("text", { x: m.l - 12, y: y + 24, "text-anchor": "end", style: "font-size:10.5px" }, svg);
+    l2.textContent = (d.attack.startsWith("time") ? "espacio " : "observa ") + d.observed.toLocaleString("es") + (d.attack.startsWith("time") ? "" : " bytes");
+    el("rect", { x: m.l, y, width: Math.max(3, X(d.seconds) - m.l), height: 18, rx: 3, fill: d.success ? "var(--crit)" : "var(--good)" }, svg);
+    const vt = el("text", { x: X(d.seconds) + 8, y: y + 13, class: "ink", style: "font-family:var(--mono);font-size:11px" }, svg);
+    vt.textContent = d.seconds.toFixed(2) + " s" + (d.success ? " · roto" : "");
+  });
+}
+
+/* ---------- Calculadora t-de-n ---------- */
+(() => {
+  const host = $("#calc");
+  const opts = rows.filter(r => r.name !== "Atractor de Lorenz" && r.name !== "UUID v4" && !r.name.includes("crudo") && !/^XOR/.test(r.name))
+    .filter((r, i, a) => !(r.name.startsWith("Mersenne") && a.findIndex(x => x.name.startsWith("Mersenne")) !== i));
+  const defs = ["secrets (CSPRNG)", "os.urandom", "Mersenne Twister #1"];
+  const optHtml = sel => opts.map(o => `<option value="${esc(o.name)}" ${o.name === sel ? "selected" : ""}>${esc(o.name)} · ${fmtBitsShort(Math.min(o.bits, 256))} bits</option>`).join("");
+  host.innerHTML = `<div class="ctrls">
+      ${[1, 2, 3].map(i => `<div class="field"><label for="s${i}">Firmante ${i}</label><select id="s${i}">${optHtml(defs[i - 1] && opts.find(o => o.name === defs[i - 1]) ? defs[i - 1] : opts[0].name)}</select></div>`).join("")}
+      <div class="field"><label for="tt">Umbral t (firmas necesarias)</label><select id="tt"><option value="1">1-de-3</option><option value="2" selected>2-de-3</option><option value="3">3-de-3</option></select></div>
+    </div>
+    <div class="meter"><div class="result" id="calcOut"></div><div class="bar"><i id="calcBar"></i></div><div id="calcSub" class="caption" style="margin:0"></div></div>`;
+  const get = id => host.querySelector(id);
+  function upd() {
+    const t = +get("#tt").value;
+    const hs = [1, 2, 3].map(i => { const o = opts.find(x => x.name === get("#s" + i).value); return { name: o.name, h: Math.min(o.bits, 256) }; });
+    const sorted = hs.slice().sort((a, b) => a.h - b.h);
+    const ht = sorted[t - 1].h, sec = Math.min(ht, 128);
+    const weak = sorted.slice(0, t).map(x => x.name).join(" + ");
+    const ok = sec >= 128, mid = sec >= 64;
+    get("#calcOut").innerHTML = `Seguridad efectiva: <b style="color:${ok ? "var(--good-text)" : mid ? "var(--warn-text)" : "var(--crit-text)"}">${sec >= 100 ? "128" : sec.toFixed(sec % 1 ? 1 : 0)} bits</b> ${ok ? "· suficiente" : mid ? "· insuficiente" : "· rota en la práctica"}`;
+    const b = get("#calcBar"); b.style.width = Math.max(1, sec / 128 * 100) + "%"; b.style.background = ok ? "var(--good)" : mid ? "var(--warn)" : "var(--crit)";
+    get("#calcSub").innerHTML = `Un atacante ataca las ${t} claves más débiles: <b>${esc(weak)}</b>. Con ${t}-de-3, el coste lo fija la ${t}.ª menor entropía (${ht >= 100 ? ht.toFixed(0) : ht.toFixed(1)} bits), acotada a 128 por la dificultad del logaritmo discreto.` +
+      (t === 2 && sorted[0].h < 128 && sorted[1].h >= 128 ? " Con dos claves fuertes, una débil no basta para gastar." : "");
+  }
+  host.querySelectorAll("select").forEach(s => s.addEventListener("change", upd));
+  upd();
+})();
+
+/* ---------- arranque ---------- */
+function drawAll() { drawScatter(); drawEst(); drawAtk(); }
+drawAll(); drawTable(); drawDetail();
+select(rows.find(r => r.name.startsWith("Mersenne")) || rows[0]);
+let rz; new ResizeObserver(() => { clearTimeout(rz); rz = setTimeout(drawAll, 90); }).observe(document.body);
+</script>
