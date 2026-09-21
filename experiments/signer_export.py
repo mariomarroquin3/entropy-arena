@@ -45,11 +45,19 @@ def main():
     ap.add_argument("name")
     ap.add_argument("--method", default="secrets")
     ap.add_argument("--network", default="testnet", choices=["testnet", "regtest"])
-    ap.add_argument("--mnemonic", help="importar un mnemónico existente (solo para verificar)")
+    ap.add_argument("--mnemonic", help="importar un mnemónico existente (queda en el historial: prefiere --ask-mnemonic)")
+    ap.add_argument("--ask-mnemonic", action="store_true",
+                    help="pide las 24 palabras sin mostrarlas ni guardarlas, y exporta solo datos públicos (ruta 48')")
     a = ap.parse_args()
 
+    if a.ask_mnemonic:
+        import getpass
+        a.mnemonic = " ".join(getpass.getpass("24 palabras (no se muestran): ").split())
     if a.mnemonic:
-        pub, secret = signer_from_mnemonic(a.mnemonic, a.name, a.network), None
+        try:
+            pub, secret = signer_from_mnemonic(a.mnemonic, a.name, a.network), None
+        except ValueError as e:
+            raise SystemExit(f"[abortado] {e}")
     else:
         try:
             secret, pub = create_signer(pick(a.method), a.name, a.network)

@@ -85,3 +85,35 @@ def test_descriptor_hardened_marker_and_order_change_text_not_wallet():
     a2 = derive_address(parse_multisig_descriptor(d_h), 0, 0)["address"]
     a3 = derive_address(parse_multisig_descriptor(multisig_descriptor(2, sg[::-1], "0", "h")), 0, 0)["address"]
     assert a1 == a2 == a3                                       # misma wallet (sortedmulti)
+
+
+def _account_xpub(path):
+    from entropy_arena.wallet.key_derivation import to_pub
+    from entropy_arena.wallet.xkeys import serialize_pub
+    m = master_key_from_seed(bytes(range(16)))
+    return m.fingerprint.hex(), serialize_pub(to_pub(derive_path(m, path)), "testnet")
+
+
+def test_public_keystore_accepts_matching_path_and_builds_wallet():
+    from entropy_arena.wallet.signer import public_keystore_export
+    signers = []
+    for seed_byte in (1, 2, 3):
+        m = master_key_from_seed(bytes([seed_byte]) * 16)
+        from entropy_arena.wallet.key_derivation import to_pub
+        from entropy_arena.wallet.xkeys import serialize_pub
+        xp = serialize_pub(to_pub(derive_path(m, "m/84'/1'/0'")), "testnet")
+        pub = public_keystore_export(f"p{seed_byte}", m.fingerprint.hex(), "m/84'/1'/0'", xp)
+        signers.append({"fingerprint": pub["master_fingerprint"], "path": pub["path"], "xpub": pub["xpub"]})
+    info = parse_multisig_descriptor(multisig_descriptor(2, signers, "0", "h"))
+    assert "84h/1h/0h" in multisig_descriptor(2, signers, "0", "h")
+    assert derive_address(info, 0, 0)["address"].startswith("tb1q")
+
+
+def test_public_keystore_rejects_path_xpub_mismatch():
+    from entropy_arena.wallet.signer import public_keystore_export
+    fp, xp84 = _account_xpub("m/84'/1'/0'")
+    for bad_path in ("m/84'/1'/0'/2'", "m/48'/1'/0'/2'", "m/84'/1'/1'"):
+        with pytest.raises(ValueError):
+            public_keystore_export("x", fp, bad_path, xp84)
+    with pytest.raises(ValueError):
+        public_keystore_export("x", "00000000", "m/84'/1'/0'", xp84)
