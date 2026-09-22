@@ -1,4 +1,9 @@
-"""secp256k1 mínimo en Python puro (educativo, no resistente a side-channels)."""
+"""secp256k1 mínimo en Python puro (educativo, no resistente a canales laterales).
+
+`key_derivation.py` usa esto solo como respaldo cuando `coincurve` (libsecp256k1, la
+librería en C de Bitcoin Core) no está instalado. Con `coincurve` disponible, todas las
+operaciones de clave pública pasan por ahí y este módulo deja de usarse en el camino
+normal; se conserva para los tests que validan ambos backends entre sí."""
 P = 2 ** 256 - 2 ** 32 - 977
 N = 0xFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFFEBAAEDCE6AF48A03BBFD25E8CD0364141
 G = (0x79BE667EF9DCBBAC55A06295CE870B07029BFCDB2DCE28D959F2815B16F81798,

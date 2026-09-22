@@ -1,11 +1,30 @@
-"""BIP32 (derivación jerárquica determinista) sobre secp256k1."""
+"""BIP32 (derivación jerárquica determinista) sobre secp256k1.
+
+Aritmética de curva: si `coincurve` está instalado (bindings de libsecp256k1, la misma
+librería en C que usa Bitcoin Core, con multiplicación de punto en tiempo constante),
+se usa esa implementación para toda operación con claves públicas. Si no está disponible,
+se cae a `secp256k1.py`, una implementación educativa en Python puro que no es resistente
+a ataques de canal lateral y no debe usarse con fondos reales."""
 import hashlib
 import hmac
 from dataclasses import dataclass
 from .hashes import hash160
 from .secp256k1 import N, P, G, point_mul, _add, pubkey_compressed
 
+try:
+    import coincurve
+    BACKEND = "coincurve (libsecp256k1)"
+except ImportError:
+    coincurve = None
+    BACKEND = "pure-python (educativo, sin protección contra canal lateral)"
+
 HARDENED = 0x80000000
+
+
+def _pub_from_priv(priv: int) -> bytes:
+    if coincurve is not None:
+        return coincurve.PrivateKey(priv.to_bytes(32, "big")).public_key.format(True)
+    return pubkey_compressed(priv)
 
 
 @dataclass(frozen=True)
@@ -18,7 +37,7 @@ class ExtKey:
 
     @property
     def pub(self) -> bytes:
-        return pubkey_compressed(self.priv)
+        return _pub_from_priv(self.priv)
 
     @property
     def fingerprint(self) -> bytes:
@@ -84,10 +103,16 @@ def derive_pub_child(parent: ExtPub, index: int) -> ExtPub:
     il = int.from_bytes(I[:32], "big")
     if il >= N:
         raise ValueError("índice inválido")
-    pt = _add(point_mul(il, G), _decompress(parent.pub))
-    if pt is None:
-        raise ValueError("punto en el infinito")
-    pub = bytes([2 + (pt[1] & 1)]) + pt[0].to_bytes(32, "big")
+    if coincurve is not None:
+        try:
+            pub = coincurve.PublicKey(parent.pub).add(I[:32]).format(True)
+        except ValueError:
+            raise ValueError("punto en el infinito")
+    else:
+        pt = _add(point_mul(il, G), _decompress(parent.pub))
+        if pt is None:
+            raise ValueError("punto en el infinito")
+        pub = bytes([2 + (pt[1] & 1)]) + pt[0].to_bytes(32, "big")
     return ExtPub(pub, I[32:], parent.depth + 1, parent.fingerprint, index)
 
 

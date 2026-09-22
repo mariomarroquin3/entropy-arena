@@ -180,8 +180,13 @@ fallido por azar no descalifica (calidad ≥ 85); dos o más sí.
 
 Léelas antes de confiar en un veredicto `APTO` para una wallet con fondos reales:
 
-- **La aritmética secp256k1 es Python puro, educativa:** sin protección contra canales
-  laterales (timing, caché). **No usar con fondos reales**, solo en `regtest`/`testnet`.
+- **Aritmética secp256k1:** si `coincurve` está instalado (viene en `requirements.txt`),
+  todas las operaciones con claves públicas usan `libsecp256k1` en C, la misma librería
+  que Bitcoin Core, con multiplicación de punto en tiempo constante. Sin `coincurve`, el
+  código cae automáticamente a `entropy_arena/wallet/secp256k1.py`, una implementación en
+  Python puro **educativa y sin protección contra canales laterales**; ambos backends se
+  verifican entre sí en los tests. En cualquier caso, esto es un prototipo sin auditoría
+  externa: **no usar con fondos reales**, solo en `regtest`/`testnet`.
 - **El veredicto mide entropía, no resistencia criptográfica.** PCG64 es `APTO` por el
   tamaño de su semilla, pero su estado se puede reconstruir a partir de la salida; no es
   un CSPRNG. Ver *"El caso ambiguo"* arriba.

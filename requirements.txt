@@ -3,3 +3,4 @@ scipy>=1.10
 matplotlib>=3.7
 pytest>=7
 mnemonic>=0.20
+coincurve>=19   # libsecp256k1 (Bitcoin Core); si no instala, cae a un backend Python puro

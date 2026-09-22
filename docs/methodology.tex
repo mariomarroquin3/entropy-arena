@@ -753,6 +753,17 @@ testnet/regtest; script type $2$ = P2WSH). Extended keys are serialized
 where the \emph{fingerprint} is the first four bytes of
 $\mathrm{RIPEMD160}(\mathrm{SHA256}(K))$ of the master public key.
 
+\paragraph{Curve arithmetic backend.} Point multiplication ($kG$) and point addition
+($I_LG+K$ for CKDpub) run through \texttt{coincurve} (Python bindings to
+\texttt{libsecp256k1}, the constant-time C library used by Bitcoin Core) when it is
+installed; otherwise the code falls back to a pure-Python implementation
+(\texttt{secp256k1.py}) kept for portability and cross-checking. The two backends are
+verified against each other in the test suite (identical public keys and CKDpub outputs
+for the same inputs) and against BIP32 test vector~1. The pure-Python path remains
+non-constant-time and unaudited; \texttt{coincurve} materially improves reliability but
+does not, by itself, make the surrounding prototype (key storage, PSBT handling, this
+codebase's own serialization) fit for real funds.
+
 \subsection{Multisignature script and descriptors}
 
 For threshold $t$ and public keys $K_1,\dots,K_n$ sorted lexicographically

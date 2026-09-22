@@ -88,3 +88,25 @@ def test_public_derivation_matches_private_and_roundtrip():
     p = parse_pub(s)
     for i in (0, 1, 7):
         assert derive_pub_child(p, i).pub == derive_child(acct, i).pub
+
+
+def test_coincurve_backend_matches_pure_python():
+    import importlib
+    from entropy_arena.wallet import key_derivation as kd
+    m = master_key_from_seed(bytes(range(16)))
+    child = derive_path(m, "m/48'/1'/0'/2'")
+    assert kd.BACKEND.startswith("coincurve"), "coincurve no está instalado: se está probando solo el fallback"
+    pub_coincurve = child.pub
+    from entropy_arena.wallet.secp256k1 import pubkey_compressed
+    assert pub_coincurve == pubkey_compressed(child.priv)
+
+    from entropy_arena.wallet.key_derivation import derive_pub_child, to_pub
+    acct_pub = to_pub(derive_path(m, "m/48'/1'/0'/2'"))
+    coincurve_child_pub = derive_pub_child(acct_pub, 3).pub
+    # forzar el camino Python puro y comparar
+    kd.coincurve = None
+    try:
+        pure_child_pub = derive_pub_child(acct_pub, 3).pub
+    finally:
+        importlib.reload(kd)
+    assert coincurve_child_pub == pure_child_pub
